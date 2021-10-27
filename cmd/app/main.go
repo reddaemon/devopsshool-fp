@@ -32,5 +32,5 @@ func main() {
 	uc := usecase.NewUseCase(r)
 
 
-	uc.PullDataByPeriod("25/09/2021")
+	uc.PullDataByPeriod("28/10/2021")
 }

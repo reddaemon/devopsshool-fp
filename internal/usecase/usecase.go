@@ -33,14 +33,13 @@ func (u *Usecase) PullDataByPeriod(startdate string) {
 	}
 
 	convertstrartdate := convertstartdatetmp.Format(layoutISO)
-
-	end := convertstartdatetmp.AddDate(0, 1, 0)
+	end := convertstartdatetmp.AddDate(0, -1, 0)
 	convertenddate := end.Format(layoutISO)
 	fmt.Println(convertstrartdate, convertenddate)
 
 	ctx := context.Background()
 
-	for d := convertstartdatetmp; !d.After(end); d = d.AddDate(0, 0, 1) {
+	for d := convertstartdatetmp; !d.Before(end); d = d.AddDate(0, 0, -1) {
 		log.Printf("process date %#v", d.Format(layoutISO))
 		url := fmt.Sprintf("http://www.cbr.ru/scripts/XML_daily.asp?date_req=%s", d.Format(layoutISO))
 		parsed := ParseXml(url)
