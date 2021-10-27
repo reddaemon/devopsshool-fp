@@ -25,7 +25,7 @@ func (u *Usecase) PullDataByPeriod(startdate string) {
 	fmt.Println(startdate)
 	const (
 		layoutISO = "02/01/2006"
-		layoutUS  = "02-Oct-2006"
+		layoutUS  = "02-Jan-2006"
 	)
 	convertstartdatetmp, err := time.Parse(layoutISO, startdate)
 	if err != nil {
