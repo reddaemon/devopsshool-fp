@@ -1,11 +1,11 @@
 package main
 
 import (
-	"context"
 	"final-project/internal/config"
 	"final-project/internal/db/postgres"
 	"final-project/internal/repository"
-	"fmt"
+	"final-project/internal/usecase"
+	//"fmt"
 	"log"
 )
 
@@ -27,15 +27,10 @@ func main() {
 	}
 	defer psqlDB.Close()
 
-	ctx := context.Background()
-	url := "http://www.cbr.ru/scripts/XML_daily.asp?date_req=25/10/2021"
-	fmt.Println(repository.ParseXml(url))
-	parsed := repository.ParseXml(url)
-	r := repository.Instance{
-		Db: psqlDB,
-	}
-	err = r.Insert(ctx, parsed)
-	if err != nil {
-		log.Fatalf("Insert error: %#v", err)
-	}
+	
+	r := repository.NewInstance(psqlDB)
+	uc := usecase.NewUseCase(r)
+
+
+	uc.PullDataByPeriod("25/09/2021")
 }

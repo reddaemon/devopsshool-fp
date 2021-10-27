@@ -15,13 +15,17 @@ type Instance struct {
 	Db *pgxpool.Pool
 }
 
+func NewInstance(db *pgxpool.Pool) *Instance {
+	return &Instance{Db: db}
+}
+
 func (i *Instance) Insert(ctx context.Context, currency []models.ValCurs) error {
 	const (
 		layoutISO = "02.01.2006"
-		layoutUS  = "02-Oct-2006"
+		layoutUS  = "02-Jan-2006"
 	)
 
-	for number, _ := range currency {
+	for number := range currency {
 		fmt.Println("RECORD:", currency[number].Valute)
 		for _, item := range currency[number].Valute {
 			fmt.Println(item)
@@ -32,16 +36,17 @@ func (i *Instance) Insert(ctx context.Context, currency []models.ValCurs) error 
 			fmt.Println("CHARCODE: ", item.CharCode)
 			fmt.Println("NOMINAL: ", item.Nominal)
 			fmt.Println("VALUE: ", item.Value)
-			fmt.Println("NAME: ", item.Name, "\n\n")
+			fmt.Println("NAME: ", item.Name)
 
 			date := currency[number].Date
-			fmt.Println(date)
+			fmt.Println("date: ", date)
 			convertdatetmp, err := time.Parse(layoutISO, date)
+			fmt.Println("convertdatetmp: ", convertdatetmp)
 			if err != nil {
 				fmt.Println(err)
 			}
 			convertdate := convertdatetmp.Format(layoutUS)
-			fmt.Println(convertdate)
+			fmt.Println("date before insert: ", convertdate)
 			value := item.Value
 			convertvalue := strings.Replace(value, ",", ".", 1)
 			query := `INSERT INTO currency 
