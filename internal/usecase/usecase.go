@@ -68,3 +68,8 @@ func ParseXml(url string) []models.ValCurs {
 
 	return currency
 }
+
+func (u *Usecase) GetData() {
+	ctx := context.Background()
+	u.repo.Select(ctx)
+}

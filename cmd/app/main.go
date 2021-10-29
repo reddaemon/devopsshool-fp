@@ -5,6 +5,7 @@ import (
 	"final-project/internal/db/postgres"
 	"final-project/internal/repository"
 	"final-project/internal/usecase"
+
 	//"fmt"
 	"log"
 )
@@ -27,10 +28,9 @@ func main() {
 	}
 	defer psqlDB.Close()
 
-	
 	r := repository.NewInstance(psqlDB)
 	uc := usecase.NewUseCase(r)
 
-
-	uc.PullDataByPeriod("28/10/2021")
+	//uc.PullDataByPeriod("28/10/2021")
+	uc.GetData()
 }
