@@ -13,6 +13,10 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
+type UsecaseInterface interface {
+	GetData()
+}
+
 type Usecase struct {
 	repo *repository.Instance
 }
@@ -69,7 +73,12 @@ func ParseXml(url string) []models.ValCurs {
 	return currency
 }
 
-func (u *Usecase) GetData() {
+func (u *Usecase) GetData() ([]models.ValCurs, error) {
 	ctx := context.Background()
-	u.repo.Select(ctx)
+	result, err := u.repo.Select(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

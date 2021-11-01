@@ -3,8 +3,11 @@ package main
 import (
 	"final-project/internal/config"
 	"final-project/internal/db/postgres"
+	"final-project/internal/handlers"
 	"final-project/internal/repository"
+	"final-project/internal/router"
 	"final-project/internal/usecase"
+	"net/http"
 
 	//"fmt"
 	"log"
@@ -30,7 +33,10 @@ func main() {
 
 	r := repository.NewInstance(psqlDB)
 	uc := usecase.NewUseCase(r)
+	h := handlers.NewHandler(uc)
+	router := router.RegisterRouter(h)
+	http.ListenAndServe(":8080", router)
 
 	//uc.PullDataByPeriod("28/10/2021")
-	uc.GetData()
+	//uc.GetData()
 }

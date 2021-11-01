@@ -5,16 +5,16 @@ import (
 )
 
 type ValCurs struct {
-	XMLName xml.Name `xml:"ValCurs"`
-	Text    string   `xml:",chardata"`
+	XMLName xml.Name `xml:"ValCurs" json:"-"`
+	Text    string   `xml:",chardata" json:"-"`
 	Date    string   `xml:"Date,attr"`
-	Name    string   `xml:"name,attr"`
+	Name    string   `xml:"name,attr" json:"-"`
 	Valute  []Valute `xml:"Valute"`
 }
 
 type Valute struct {
-	Text     string `xml:",chardata"`
-	ID       string `xml:"ID,attr"`
+	Text     string `xml:",chardata" json:"-"`
+	ID       string `xml:"ID,attr" json:"Valute_ID"`
 	NumCode  string `xml:"NumCode"`
 	CharCode string `xml:"CharCode"`
 	Nominal  string `xml:"Nominal"`

@@ -3,6 +3,7 @@ package repository
 import (
 	"encoding/json"
 	"final-project/internal/models"
+	"log"
 	"strings"
 	"time"
 
@@ -77,7 +78,7 @@ func (i *Instance) Insert(ctx context.Context, currency []models.ValCurs) error 
 func (i *Instance) Select(ctx context.Context) ([]models.ValCurs, error) {
 	//query1 := `SELECT date_of_request FROM currency`
 	query := `SELECT date_of_request::text, json_agg(json_build_object(
-		'valute_id', valute_id::text,
+		'valute_id', valute_id,
 		'numcode',  numcode::text, 
 		'charcode', charcode::text, 
 		'nominal', nominal::text,
@@ -97,18 +98,21 @@ func (i *Instance) Select(ctx context.Context) ([]models.ValCurs, error) {
 	}
 	//После того как все действия со строками будут выполнены, обязательно и всегда нужно закрывать структуру rows. Для избежания утечек памяти и утечек конектов к базе
 	defer rows.Close()
-	currency := models.ValCurs{}
-
-	var currencytmp string
 
 	for rows.Next() {
+		currency := models.ValCurs{}
+		var currencytmp string
 		rows.Scan(&currency.Date, &currencytmp)
-		json.Unmarshal([]byte(currencytmp), &currency.Valute)
+
+		err := json.Unmarshal([]byte(currencytmp), &currency.Valute)
+		if err != nil {
+			log.Printf("%#v", err)
+		}
+		log.Printf("currency: %#v", currency)
 		valcurs = append(valcurs, currency)
 	}
 
-	fmt.Println("CURRENCY: ", currency)
-	fmt.Println("VALCURS: ", valcurs)
+	//log.Printf("VALCURS: %#v", valcurs)
 	return valcurs, nil
 
 }
