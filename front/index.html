@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/css/foundation.min.css">-->
+  <link rel="stylesheet" href="style.css" <meta charset="utf-8">
+  <title>Currency Rate</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+
+<body>
+  <div id="app">
+    <table class="styled-table" v-for="(result, index) in results">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Valute_ID</th>
+          <th>NumCode</th>
+          <th>CharCode</th>
+          <th>Nominal</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(result, index) in results" :key=index>
+          <td>{{ result.Valute[index].Name }}</td>
+          <td>{{ result.Date }}</td>
+          <td>{{ result.Valute[index].Valute_ID }}</td>
+          <td>{{ result.Valute[index].NumCode }}</td>
+          <td>{{ result.Valute[index].CharCode }}</td>
+          <td>{{ result.Valute[index].Nominal }}</td>
+          <td>{{ result.Valute[index].Value }}</td>
+
+        </tr>
+        <!-- and so on... -->
+      </tbody>
+    </table>
+  </div>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="vueApp.js"></script>
+</body>
+
+</html>

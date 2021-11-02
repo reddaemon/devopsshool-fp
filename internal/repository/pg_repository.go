@@ -83,7 +83,7 @@ func (i *Instance) Select(ctx context.Context) ([]models.ValCurs, error) {
 		'charcode', charcode::text, 
 		'nominal', nominal::text,
 		'value', value::text,
-		'name', name::text)) FROM currency GROUP BY date_of_request;`
+		'name', name::text)) FROM currency GROUP BY date_of_request ORDER by date_of_request;`
 	//rows, err := i.Db.Query(ctx, query)
 
 	//Определяем слайс users, куда будем складывать всех пользователей, которых получим из базы
@@ -108,7 +108,7 @@ func (i *Instance) Select(ctx context.Context) ([]models.ValCurs, error) {
 		if err != nil {
 			log.Printf("%#v", err)
 		}
-		log.Printf("currency: %#v", currency)
+		//log.Printf("currency: %#v", currency)
 		valcurs = append(valcurs, currency)
 	}
 
