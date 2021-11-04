@@ -1,4 +1,7 @@
 .styled-table {
+    width: 100%;
+    table-layout: fixed;
+    overflow: break-word;
     border-collapse: collapse;
     margin: 25px 0;
     font-size: 0.9em;

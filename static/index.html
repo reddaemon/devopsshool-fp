@@ -11,11 +11,11 @@
 
 <body>
   <div id="app">
-    <table class="styled-table" v-for="(result, index) in results">
+    <table class="styled-table">
       <thead>
         <tr>
-          <th>Name</th>
           <th>Date</th>
+          <th>Name</th>
           <th>Valute_ID</th>
           <th>NumCode</th>
           <th>CharCode</th>
@@ -24,21 +24,21 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(result, index) in results" :key=index>
-          <td>{{ result.Valute[index].Name }}</td>
-          <td>{{ result.Date }}</td>
-          <td>{{ result.Valute[index].Valute_ID }}</td>
-          <td>{{ result.Valute[index].NumCode }}</td>
-          <td>{{ result.Valute[index].CharCode }}</td>
-          <td>{{ result.Valute[index].Nominal }}</td>
-          <td>{{ result.Valute[index].Value }}</td>
+        <tr v-for="(result, index) in results" v-bind:key="index">
+          <td>{{ result[0] }}</td>
+          <td>{{ result[1] }}</td>
+          <td>{{ result[2] }}</td>
+          <td>{{ result[3] }}</td>
+          <td>{{ result[4] }}</td>
+          <td>{{ result[5] }}</td>
+          <td>{{ result[6] }}</td>
 
         </tr>
         <!-- and so on... -->
       </tbody>
     </table>
   </div>
-  <script src="https://unpkg.com/vue"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
   <script src="vueApp.js"></script>
 </body>
 

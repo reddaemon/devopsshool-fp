@@ -2,12 +2,15 @@ package router
 
 import (
 	//"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/chi/v5"
 	"final-project/internal/handlers"
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func RegisterRouter(handler *handlers.Handler) *chi.Mux {
 	r := chi.NewRouter()
+	r.Handle("/static/*", http.StripPrefix("/static", http.FileServer(http.Dir("static"))))
 	r.Route("/v1", func(r chi.Router) {
 		r.Get("/rate", handler.GetRate)
 	})

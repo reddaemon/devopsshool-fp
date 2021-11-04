@@ -76,7 +76,6 @@ func (i *Instance) Insert(ctx context.Context, currency []models.ValCurs) error 
 }
 
 func (i *Instance) Select(ctx context.Context) ([]models.ValCurs, error) {
-	//query1 := `SELECT date_of_request FROM currency`
 	query := `SELECT date_of_request::text, json_agg(json_build_object(
 		'valute_id', valute_id,
 		'numcode',  numcode::text, 
@@ -84,19 +83,16 @@ func (i *Instance) Select(ctx context.Context) ([]models.ValCurs, error) {
 		'nominal', nominal::text,
 		'value', value::text,
 		'name', name::text)) FROM currency GROUP BY date_of_request ORDER by date_of_request;`
-	//rows, err := i.Db.Query(ctx, query)
 
-	//Определяем слайс users, куда будем складывать всех пользователей, которых получим из базы
-	//var rates []models.Valute
+	
 	var valcurs []models.ValCurs
 
-	//Выполнение самого запроса. И получение структуры rows, которая содержит в себе строки из базы данных.
 	rows, err := i.Db.Query(ctx, query)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
-	//После того как все действия со строками будут выполнены, обязательно и всегда нужно закрывать структуру rows. Для избежания утечек памяти и утечек конектов к базе
+
 	defer rows.Close()
 
 	for rows.Next() {
@@ -108,11 +104,10 @@ func (i *Instance) Select(ctx context.Context) ([]models.ValCurs, error) {
 		if err != nil {
 			log.Printf("%#v", err)
 		}
-		//log.Printf("currency: %#v", currency)
+
 		valcurs = append(valcurs, currency)
 	}
 
-	//log.Printf("VALCURS: %#v", valcurs)
 	return valcurs, nil
 
 }
