@@ -49,7 +49,7 @@ func (u *Usecase) PullDataByPeriod(startdate string) {
 		parsed := ParseXml(url)
 		err = u.repo.Insert(ctx, parsed)
 		if err != nil {
-			log.Fatalf("Insert error: %#v", err)
+			log.Printf("Insert error: %#v", err)
 		}
 	}
 }

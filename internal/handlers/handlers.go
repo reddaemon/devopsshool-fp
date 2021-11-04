@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"final-project/internal/models"
 	"final-project/internal/usecase"
+	"log"
 	"net/http"
 	"sort"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type Handler struct {
@@ -68,4 +71,17 @@ func sortRecords(records []models.Valute, orderField string, orderBy int) {
 		}
 		return records[i].ID > records[j].ID
 	})
+}
+
+func (h *Handler) PullRate(w http.ResponseWriter, r *http.Request) {
+	dd := chi.URLParam(r, "dd")
+	mm := chi.URLParam(r, "mm")
+	yyyy := chi.URLParam(r, "yyyy")
+	log.Printf("%s %s %s", dd, mm, yyyy)
+	date := dd + "/" + mm + "/" + yyyy
+	h.uc.PullDataByPeriod(date)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.WriteHeader(http.StatusOK)
 }

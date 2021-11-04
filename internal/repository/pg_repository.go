@@ -84,7 +84,6 @@ func (i *Instance) Select(ctx context.Context) ([]models.ValCurs, error) {
 		'value', value::text,
 		'name', name::text)) FROM currency GROUP BY date_of_request ORDER by date_of_request;`
 
-	
 	var valcurs []models.ValCurs
 
 	rows, err := i.Db.Query(ctx, query)
