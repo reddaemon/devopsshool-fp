@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"final-project/internal/models"
 	"final-project/internal/usecase"
-	"fmt"
 	"net/http"
 	"sort"
 )
@@ -34,8 +33,6 @@ func (h *Handler) GetRate(w http.ResponseWriter, r *http.Request) {
 			tmpInternalResult = nil
 		}
 	}
-
-	fmt.Println(tmpFinalResult)
 
 	js, err := json.MarshalIndent(tmpFinalResult, " ", " ")
 	if err != nil {

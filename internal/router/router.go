@@ -10,7 +10,7 @@ import (
 
 func RegisterRouter(handler *handlers.Handler) *chi.Mux {
 	r := chi.NewRouter()
-	r.Handle("/static/*", http.StripPrefix("/static", http.FileServer(http.Dir("static"))))
+	r.Handle("/*", http.StripPrefix("/", http.FileServer(http.Dir("static"))))
 	r.Route("/v1", func(r chi.Router) {
 		r.Get("/rate", handler.GetRate)
 	})
