@@ -22,7 +22,8 @@ func NewPsqlDb(c *config.Config) (*pgxpool.Pool, error) {
 		c.Postgres.PostgresqlDbname,
 		5)
 
-	ctx, _ := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	//Сконфигурируем пул, задав для него максимальное количество соединений
 	poolConfig, _ := pgxpool.ParseConfig(connStr)

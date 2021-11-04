@@ -9,7 +9,6 @@ import (
 	"final-project/internal/usecase"
 	"net/http"
 
-	//"fmt"
 	"log"
 )
 
@@ -36,7 +35,4 @@ func main() {
 	h := handlers.NewHandler(uc)
 	router := router.RegisterRouter(h)
 	http.ListenAndServe(":8080", router)
-
-	//uc.PullDataByPeriod("28/10/2021")
-	//uc.GetData()
 }
