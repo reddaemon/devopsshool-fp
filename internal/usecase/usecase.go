@@ -26,20 +26,19 @@ func NewUseCase(repo *repository.Instance) *Usecase {
 }
 
 func (u *Usecase) PullDataByPeriod(startdate string) {
-	fmt.Println(startdate)
 	const (
 		layoutISO = "02/01/2006"
 		layoutUS  = "02-Jan-2006"
 	)
 	convertstartdatetmp, err := time.Parse(layoutISO, startdate)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	convertstrartdate := convertstartdatetmp.Format(layoutISO)
 	end := convertstartdatetmp.AddDate(0, -1, 0)
 	convertenddate := end.Format(layoutISO)
-	fmt.Println(convertstrartdate, convertenddate)
+	log.Println(convertstrartdate, convertenddate)
 
 	ctx := context.Background()
 

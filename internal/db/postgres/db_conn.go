@@ -12,7 +12,6 @@ import (
 )
 
 func NewPsqlDb(c *config.Config) (*pgxpool.Pool, error) {
-	fmt.Println(c.Postgres.PostgresqlHost)
 	connStr := fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=disable&connect_timeout=%d",
 		"postgres",
 		url.QueryEscape(c.Postgres.PostgresqlUser),
