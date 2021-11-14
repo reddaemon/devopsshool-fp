@@ -6,6 +6,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.5
 	github.com/jackc/pgconn v1.10.0
 	github.com/jackc/pgx/v4 v4.13.0
+	github.com/lib/pq v1.10.4
 	github.com/pressly/goose/v3 v3.3.1
 	github.com/spf13/viper v1.9.0
 	golang.org/x/net v0.0.0-20211020060615-d418f374d309
@@ -21,7 +22,6 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.8.1 // indirect
 	github.com/jackc/puddle v1.1.3 // indirect
-	github.com/lib/pq v1.10.4 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
