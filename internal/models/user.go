@@ -10,7 +10,17 @@ type Token struct {
 	jwt.StandardClaims
 }
 
+type TokenDetails struct {
+	AccessToken string
+	RefreshToken string
+	AccessUuid string
+	RefreshUuid string
+	AtExpires int64
+	RtExpires int64
+}
+
 type User struct {
+	ID uuid.UUID
 	Email string `json:"email"`
 	Password string `json:"password"`
 	Token string `json:"token"`

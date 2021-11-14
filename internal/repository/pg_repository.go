@@ -12,14 +12,17 @@ import (
 
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/go-redis/redis/v8"
 )
 
 type Instance struct {
 	Db *pgxpool.Pool
+	redisConn *redis.Client
+	
 }
 
-func NewInstance(db *pgxpool.Pool) *Instance {
-	return &Instance{Db: db}
+func NewInstance(db *pgxpool.Pool, rc *redis.Client) *Instance {
+	return &Instance{Db: db, redisConn: rc}
 }
 
 func (i *Instance) Insert(ctx context.Context, currency []models.ValCurs) error {

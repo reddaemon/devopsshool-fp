@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"sort"
 
+	"github.com/google/uuid"
+
 	"github.com/go-chi/chi/v5"
 )
 
@@ -84,4 +86,71 @@ func (h *Handler) PullRate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
+	var u models.User
+	ctx := r.Context()
+	err := json.NewDecoder(r.Body).Decode(&u)
+	if err != nil {
+		// If there is something wrong with the request body, return a 400 status
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err = h.uc.AddUser(ctx, &u)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+}
+
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+
+	var u models.User
+	ctx := r.Context()
+	err := json.NewDecoder(r.Body).Decode(&u)
+	log.Printf("user: %#v", u)
+	if err != nil {
+		// If there is something wrong with the request body, return a 400 status
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	_, err = h.uc.VerifyUser(ctx, &u)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	u.ID, err = uuid.NewRandom()
+	if err != nil {
+		log.Println("cannot create uuid")
+	}
+
+	ts, err := h.uc.CreateToken(u.ID.Time())
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	saveErr := h.uc.CreateAuth(ctx, int64(u.ID.Time()), ts)
+	if saveErr != nil {
+		w.Write([]byte(saveErr.Error()))
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+	tokens := map[string]string{
+		"access_token":  ts.AccessToken,
+		"refresh_token": ts.RefreshToken,
+	}
+
+	resp, _ := json.Marshal(tokens)
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(resp)
 }
