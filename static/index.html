@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" href="style.css" <meta charset="utf-8">
+  <title>Currency Rate</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Name</th>
+          <th>Valute_ID</th>
+          <th>NumCode</th>
+          <th>CharCode</th>
+          <th>Nominal</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(result, index) in results" v-bind:key="index">
+          <td>{{ result[0] }}</td>
+          <td>{{ result[1] }}</td>
+          <td>{{ result[2] }}</td>
+          <td>{{ result[3] }}</td>
+          <td>{{ result[4] }}</td>
+          <td>{{ result[5] }}</td>
+          <td>{{ result[6] }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+  <script src="vueApp.js"></script>
+</body>
+</html>
