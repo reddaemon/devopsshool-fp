@@ -15,4 +15,5 @@
 # vendor/
 .config
 .env
+.vscode
 
