@@ -1,3 +1,4 @@
 .config
 .data
 .vscode/launch.json
+.env
