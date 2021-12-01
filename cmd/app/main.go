@@ -36,13 +36,17 @@ func main() {
 		log.Printf("Postgres connected, Status: %#v", psqlDB.Stat())
 	}
 	defer psqlDB.Close()
-	redisConn, err := redis.NewRedisConn(cfg)
-	if err != nil {
-		log.Fatalf("Redis connection init: %s", err)
+
 	mdb, _ := sql.Open("postgres", psqlDB.Config().ConnString())
 	err = goose.Up(mdb, "./internal/migrations")
 	if err != nil {
+		log.Printf("migration err: %#v", err)
 		panic(err)
+	}
+
+	redisConn, err := redis.NewRedisConn(cfg)
+	if err != nil {
+		log.Fatalf("Redis connection init: %s", err)
 	}
 
 	r := repository.NewInstance(psqlDB, redisConn)
@@ -51,4 +55,5 @@ func main() {
 	h := handlers.NewHandler(uc)
 	router := router.RegisterRouter(h)
 	http.ListenAndServe(":8080", router)
+
 }
