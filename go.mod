@@ -9,8 +9,10 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/jackc/pgconn v1.10.0
 	github.com/jackc/pgx/v4 v4.13.0
+	github.com/lib/pq v1.10.4
+	github.com/pressly/goose/v3 v3.3.1
 	github.com/spf13/viper v1.9.0
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
+	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
 	golang.org/x/net v0.0.0-20211020060615-d418f374d309
 )
 
