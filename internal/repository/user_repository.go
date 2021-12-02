@@ -142,3 +142,21 @@ func (I *Instance) CreateAuth(ctx context.Context, userid int64, td *models.Toke
 	}
 	return nil
 }
+
+func (I *Instance) FetchAuth(ctx context.Context, authD *models.AccessDetails) (uint64, error) {
+	userid, err := I.redisConn.Get(ctx, authD.AccessUuid).Result()
+	if err != nil {
+		return 0, err
+	}
+	userID,_ := strconv.ParseUint(userid, 10, 64)
+	return userID, nil
+	
+}
+
+func (I *Instance) DeleteAuth(ctx context.Context, givenUuid string) (int64, error) {
+	deleted, err := I.redisConn.Del(ctx, givenUuid).Result()
+	if err != nil {
+		return 0, err
+	}
+	return deleted, nil
+}

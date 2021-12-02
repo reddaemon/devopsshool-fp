@@ -5,6 +5,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type AccessDetails struct {
+    AccessUuid string
+    UserId   uint64
+}
+
 type Token struct {
 	UserID uuid.UUID
 	jwt.StandardClaims

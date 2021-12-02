@@ -16,6 +16,7 @@ func RegisterRouter(handler *handlers.Handler) *chi.Mux {
 		r.Get("/pullrate/{dd:\\d\\d}/{mm:\\d\\d}/{yyyy:\\d\\d\\d\\d}", handler.PullRate)
 		r.Post("/register", handler.Register)
 		r.Post("/login", handler.Login)
+		r.Post("/logout", handler.Logout)
 	})
 
 	return r

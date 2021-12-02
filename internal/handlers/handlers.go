@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"final-project/internal/models"
 	"final-project/internal/usecase"
+	"final-project/internal/middleware"
 	"log"
 	"net/http"
 	"sort"
@@ -153,4 +154,25 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(resp)
+}
+
+func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	au, err := middleware.ExtractTokenMetadata(r)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Header().Add("Content-Type", "application/json")
+		w.Write([]byte("unauthorized"))
+		return
+	}
+	deleted, err := h.uc.DeleteAuth(ctx, au.AccessUuid)
+	if err != nil || deleted == 0 { //if any goes wrong
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Header().Add("Content-Type", "application/json")
+		w.Write([]byte("unauthorized"))
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Add("Content-Type", "application/json")
+	w.Write([]byte("Successfully logged out"))
 }

@@ -142,3 +142,13 @@ func (u *Usecase) CreateAuth(ctx context.Context, userid int64, td *models.Token
 	}
 	return nil
 }
+
+func (u *Usecase) DeleteAuth(ctx context.Context, userid string) (int64, error) {
+	userID, err := u.repo.DeleteAuth(ctx, userid)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
+}
+
+
