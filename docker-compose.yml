@@ -14,8 +14,8 @@ services:
   redis:
     image: "redis:6-alpine"
     container_name: "redis"
-    environment:
-      - REDIS_PASSWORD=pwd123
+    env_file:
+      - .env
     command: >
       --requirepass ${REDIS_PASSWORD}
     ports:
