@@ -24,7 +24,7 @@ func (i *Instance) PreCheck(ctx context.Context, user *models.User) bool {
 		return false
 	}
 
-	query := `SELECT email, password FROM users WHERE email=$1`
+	query := `SELECT email, passwordhash FROM users WHERE email=$1`
 	rows, err := i.Db.Query(ctx, query,
 		user.Email,
 	)
@@ -58,7 +58,7 @@ func (i *Instance) PreCheck(ctx context.Context, user *models.User) bool {
 }
 
 func (i *Instance) CheckCredentials(ctx context.Context, user *models.User) (bool, error) {
-	log.Printf("userBeforeQuery: %#v", user)
+	log.Printf("userBeforeQuery: %s %s", user.Email, user.Token)
 	temp := &models.User{}
 
 	query := `SELECT email, passwordhash FROM users WHERE email=$1`
@@ -93,7 +93,7 @@ func (i *Instance) AddUser(ctx context.Context, user *models.User) error {
 	user.Password = string(hashedPassword)
 
 	query := `INSERT INTO users 
-	(email, password)
+	(email, passwordhash)
 	 VALUES ($1, $2)`
 
 	commandTag, err := i.Db.Exec(ctx, query,
@@ -148,9 +148,9 @@ func (I *Instance) FetchAuth(ctx context.Context, authD *models.AccessDetails) (
 	if err != nil {
 		return 0, err
 	}
-	userID,_ := strconv.ParseUint(userid, 10, 64)
+	userID, _ := strconv.ParseUint(userid, 10, 64)
 	return userID, nil
-	
+
 }
 
 func (I *Instance) DeleteAuth(ctx context.Context, givenUuid string) (int64, error) {

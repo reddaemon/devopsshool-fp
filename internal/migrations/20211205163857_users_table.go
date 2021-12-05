@@ -12,15 +12,11 @@ func init() {
 
 func upUsersTable(tx *sql.Tx) error {
 	// This code is executed when the migration is applied.
-	_, err := tx.Exec(`CREATE TABLE public.users (
-			id serial4 NOT NULL,
-			created_at timestamp NULL,
-			name varchar(100) NULL,
-			age int4 NULL,
-			verify bool NULL,
-			updated_at timestamp NULL DEFAULT now(),
-			last_name varchar(100) NULL
-		);
+	_, err := tx.Exec(`CREATE TABLE IF NOT EXISTS public.users (
+		id serial4 NOT NULL,
+		email varchar(100) NULL,
+		passwordhash varchar(100) NULL
+	  );
 	`)
 	if err != nil {
 		return err

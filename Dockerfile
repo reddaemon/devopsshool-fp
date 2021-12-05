@@ -9,4 +9,5 @@ WORKDIR /
 COPY --from=builder /app/.config .
 COPY --from=builder /app/app .
 COPY --from=builder /app/static /static
+COPY --from=builder /app/scripts/wait /scripts/wait
 ENTRYPOINT ["./app"]

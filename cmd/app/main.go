@@ -41,7 +41,7 @@ func main() {
 	err = goose.Up(mdb, "./internal/migrations")
 	if err != nil {
 		log.Printf("migration err: %#v", err)
-		panic(err)
+		log.Printf("%s", err)
 	}
 
 	redisConn, err := redis.NewRedisConn(cfg)

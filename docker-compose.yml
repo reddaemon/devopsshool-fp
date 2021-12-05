@@ -9,6 +9,10 @@ services:
       - "8080:8080"
     volumes:
       - ./internal/migrations:/internal/migrations
+    environment:
+      - ACCESS_SECRET=secret
+    command: "/scripts/wait --wait \"db:5432\" --command \"echo \"Databases are
+      up\"\" --timeout 10"
     networks:
       - db
       - redis
