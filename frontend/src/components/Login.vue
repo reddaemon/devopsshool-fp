@@ -1,4 +1,7 @@
 <template>
+<div class="fa-home">
+  <h5>Authorization</h5>
+</div>
  <div class="col-md-12">
     <div class="card card-container">
       <Form @submit="handleLogin" :validation-schema="schema">
@@ -83,4 +86,9 @@ export default {
 };
 </script>
 <style scoped>
+.header {
+  background-color: darkgray;
+  color: white;
+}
+
 </style>

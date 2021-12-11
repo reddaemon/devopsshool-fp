@@ -1,5 +1,6 @@
 import axios from 'axios';
 import TokenService from './TokenService';
+import authHeader from './auth-header';
 
 const API_URL = 'http://localhost:8080/v1/';
 
@@ -18,9 +19,9 @@ class AuthService {
         });
     }
 
-    async logout() {
+    logout() {
       return axios
-        .post(API_URL + 'logout')  
+        .post(API_URL + 'logout', {headers: authHeader()})  
         .then(response => {
             console.log(response)
             TokenService.removeUser();
