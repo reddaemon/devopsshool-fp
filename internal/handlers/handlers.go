@@ -2,13 +2,16 @@ package handlers
 
 import (
 	"encoding/json"
+	"final-project/internal/middleware"
 	"final-project/internal/models"
 	"final-project/internal/usecase"
-	"final-project/internal/middleware"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"sort"
 
+	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/google/uuid"
 
 	"github.com/go-chi/chi/v5"
@@ -152,6 +155,12 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	resp, _ := json.Marshal(tokens)
 
 	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Vary", "Origin")
+	w.Header().Add("Vary", "Access-Control-Request-Method")
+	w.Header().Add("Vary", "Access-Control-Request-Headers")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Origin, Accept, token")
+	w.Header().Add("Access-Control-Allow-Methods", "GET, POST,OPTIONS")
 	w.WriteHeader(http.StatusOK)
 	w.Write(resp)
 }
@@ -175,4 +184,86 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Add("Content-Type", "application/json")
 	w.Write([]byte("Successfully logged out"))
+}
+
+func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	mapToken := map[string]string{}
+	refreshtoken := mapToken["refresh_token"]
+
+	//verify the token
+	token, err := jwt.Parse(refreshtoken, func(token *jwt.Token) (interface{}, error) {
+		//Make sure that the token method conform to "SigningMethodHMAC"
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(os.Getenv("REFRESH_SECRET")), nil
+	})
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Header().Add("Content-Type", "application/json")
+		w.Write([]byte("Refresh token expired"))
+		return
+	}
+	//is token valid?
+	if _, ok := token.Claims.(jwt.StandardClaims); !ok && !token.Valid {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	//Since token is valid, get the uuid:
+	claims, ok := token.Claims.(jwt.MapClaims) // the token claims should conform to MapClaims
+	if ok && token.Valid {
+		refreshUuid, ok := claims["refresh_uuid"].(string) // convert interface to string
+		if !ok {
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			w.Header().Add("Content-Type", "application/json")
+		}
+
+		//userId, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["user_id"]), 10, 64)
+		userId := claims["user_id"]
+		if err != nil {
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			w.Header().Add("Content-Type", "application/json")
+			w.Write([]byte("Error occurred"))
+			return
+		}
+
+		// Delete the previous Refresh Token
+		deleted, err := h.uc.DeleteAuth(ctx, refreshUuid)
+		if err != nil || deleted == 0 {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		// Create new pairs of refresh and access tokens
+		ts, err := h.uc.CreateToken(userId.(uuid.Time))
+		if err != nil {
+			w.WriteHeader(http.StatusForbidden)
+			w.Header().Add("Content-Type", "application/json")
+			return
+		}
+		// save the tokens metadata to redis
+		err = h.uc.CreateAuth(ctx, userId.(int64), ts)
+		if err != nil {
+			w.WriteHeader(http.StatusForbidden)
+			w.Header().Add("Content-Type", "application/json")
+			w.Write([]byte(err.Error()))
+			return
+		}
+		tokens := map[string]string{
+			"access_token":  ts.AccessToken,
+			"refresh_token": ts.RefreshToken,
+		}
+		resp, _ := json.Marshal(tokens)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Vary", "Origin")
+		w.Header().Add("Vary", "Access-Control-Request-Method")
+		w.Header().Add("Vary", "Access-Control-Request-Headers")
+		w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Origin, Accept, token")
+		w.Header().Add("Access-Control-Allow-Methods", "GET, POST,OPTIONS")
+		w.WriteHeader(http.StatusCreated)
+		w.Write(resp)
+
+	}
 }
