@@ -169,13 +169,16 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	au, err := middleware.ExtractTokenMetadata(r)
 	if err != nil {
+		log.Println("cannot extract token metadata...")
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Header().Add("Content-Type", "application/json")
 		w.Write([]byte("unauthorized"))
 		return
 	}
+	log.Println("au.AccessUuid: ", au.AccessUuid)
 	deleted, err := h.uc.DeleteAuth(ctx, au.AccessUuid)
 	if err != nil || deleted == 0 { //if any goes wrong
+		log.Println("cannot delete auth for accessUUid")
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Header().Add("Content-Type", "application/json")
 		w.Write([]byte("unauthorized"))
