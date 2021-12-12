@@ -184,6 +184,13 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("unauthorized"))
 		return
 	}
+	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Vary", "Origin")
+	w.Header().Add("Vary", "Access-Control-Request-Method")
+	w.Header().Add("Vary", "Access-Control-Request-Headers")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Origin, Accept, token")
+	w.Header().Add("Access-Control-Allow-Methods", "GET, POST,OPTIONS")
 	w.WriteHeader(http.StatusOK)
 	w.Header().Add("Content-Type", "application/json")
 	w.Write([]byte("Successfully logged out"))

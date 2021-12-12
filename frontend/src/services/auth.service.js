@@ -1,12 +1,11 @@
-import axios from 'axios';
 import TokenService from './TokenService';
-import authHeader from './auth-header';
+import api from './api'
 
 const API_URL = 'http://localhost:8080/v1/';
 
 class AuthService {
     async login({email, password }) {
-      return axios
+      return api
         .post(API_URL + 'login', {
             email,
             password
@@ -20,8 +19,8 @@ class AuthService {
     }
 
     logout() {
-      return axios
-        .post(API_URL + 'logout', {headers: authHeader()})  
+      return api
+        .post(API_URL + 'logout')  
         .then(response => {
             console.log(response)
             TokenService.removeUser();
@@ -30,7 +29,7 @@ class AuthService {
     }
 
     register(email, password) {
-        return axios
+        return api
           .post(API_URL + 'signup', {
               email,
               password

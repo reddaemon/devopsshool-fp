@@ -10,7 +10,7 @@ import setupInterceptors from './services/setupInterceptors'
 setupInterceptors(store)
 
 createApp(App)
-.use(store)
 .use(router)
+.use(store)
 .component("font-awesome-icon", FontAwesomeIcon)
 .mount('#app')

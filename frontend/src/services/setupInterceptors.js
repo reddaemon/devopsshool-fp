@@ -22,12 +22,13 @@ const setup = (store) => {
         async (err) => {
             const originalConfig = err.config
             if (originalConfig.url !== "/signin" && err.response) {
+                // Access Token was expired
                 if (err.response.status === 401 && !originalConfig._retry) {
                     originalConfig._retry = true;
 
                     try {
                         const rs = await axiosInstance.post("/refresh", {
-                            refreshToken: TokenService.getLocalAccessToken(),
+                            refreshToken: TokenService.getLocalRefreshToken(),
                         });
                         
                         const { accessToken } = rs.data;
@@ -35,12 +36,12 @@ const setup = (store) => {
                         TokenService.updateLocalAccessToken(accessToken);
 
                         return axiosInstance(originalConfig);
-
                     } catch (_error) {
                         return Promise.reject(err);
                     }
                 }
             }
+            return Promise.reject(err)
         }
     )
 }
