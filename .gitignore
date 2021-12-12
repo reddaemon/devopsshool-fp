@@ -16,4 +16,8 @@
 .config
 .env
 .vscode
+data
+scripts/
 
+# node
+node_modules

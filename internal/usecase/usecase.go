@@ -8,8 +8,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
+	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/google/uuid"
 	"golang.org/x/net/html/charset"
 )
 
@@ -81,3 +84,71 @@ func (u *Usecase) GetData() ([]models.ValCurs, error) {
 
 	return result, nil
 }
+
+func (u *Usecase) VerifyUser(ctx context.Context, user *models.User) (bool, error) {
+	ok, err := u.repo.CheckCredentials(ctx, user)
+	if !ok {
+		log.Printf("invalid user creds: %s", err)
+		return false, err
+	}
+	return true, nil
+}
+
+func (u *Usecase) AddUser(ctx context.Context, user *models.User) error {
+	err := u.repo.AddUser(ctx, user)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (u *Usecase) CreateToken(userid uuid.Time) (*models.TokenDetails, error) {
+	td := &models.TokenDetails{}
+	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
+	td.AccessUuid = uuid.New().String()
+
+	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
+	td.RefreshUuid = uuid.New().String()
+	var err error
+	// Creating Access Token
+	atClaims := jwt.MapClaims{}
+	atClaims["authorized"] = true
+	atClaims["access_uuid"] = td.AccessUuid
+	atClaims["user_id"] = userid
+	atClaims["exp"] = td.AtExpires
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
+	if err != nil {
+		return nil, err
+	}
+	// Creating Refresh Token
+	rtClaims := jwt.MapClaims{}
+	rtClaims["refresh_uuid"] = userid
+	rtClaims["user_id"] = userid
+	rtClaims["exp"] = td.RtExpires
+	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
+	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))
+	if err != nil {
+		return nil, err
+	}
+	return td, nil
+}
+
+func (u *Usecase) CreateAuth(ctx context.Context, userid int64, td *models.TokenDetails) error {
+	err := u.repo.CreateAuth(ctx, userid, td)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *Usecase) DeleteAuth(ctx context.Context, userid string) (int64, error) {
+	userID, err := u.repo.DeleteAuth(ctx, userid)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
+}
+
+

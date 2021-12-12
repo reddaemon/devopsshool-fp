@@ -13,7 +13,7 @@ func init() {
 func upCreateTable(tx *sql.Tx) error {
 	// This code is executed when the migration is applied.
 	_, err := tx.Exec(`
-		CREATE TABLE public.currency (
+		CREATE TABLE IF NOT EXISTS public.currency  (
 			id serial4 NOT NULL,
 			date_of_request date NULL,
 			valute_id varchar(7) NULL,

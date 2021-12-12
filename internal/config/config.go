@@ -10,6 +10,7 @@ import (
 // App config struct
 type Config struct {
 	Postgres PostgresConfig
+	Redis    RedisConfig
 	Logger   Logger
 }
 
@@ -30,6 +31,14 @@ type PostgresConfig struct {
 	PostgresqlPassword string
 	PostgresqlDbname   string
 	PostgresqlSSLMode  bool
+}
+
+// Redis config
+type RedisConfig struct {
+	RedisHost     string
+	RedisPort     string
+	RedisPassword string
+	RedisUsername string
 }
 
 // Load config file from given path
