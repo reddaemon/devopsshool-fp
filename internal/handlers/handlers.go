@@ -116,7 +116,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var u models.User
 	ctx := r.Context()
 	err := json.NewDecoder(r.Body).Decode(&u)
-	log.Printf("user: %#v", u)
+	log.Printf("user: %#v", u.Email)
 	if err != nil {
 		// If there is something wrong with the request body, return a 400 status
 		w.WriteHeader(http.StatusBadRequest)

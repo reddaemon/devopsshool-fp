@@ -58,7 +58,7 @@ func (i *Instance) PreCheck(ctx context.Context, user *models.User) bool {
 }
 
 func (i *Instance) CheckCredentials(ctx context.Context, user *models.User) (bool, error) {
-	log.Printf("userBeforeQuery: %s %s", user.Email, user.Token)
+	log.Printf("userBeforeQuery: %s", user.Email)
 	temp := &models.User{}
 
 	query := `SELECT email, passwordhash FROM users WHERE email=$1`

@@ -8,7 +8,7 @@ FROM node:17.2-alpine3.14 as front-builder
 RUN apk add --no-cache --virtual .gyp python3 make g++
 WORKDIR /app
 COPY ./frontend/package.json /frontend/package-lock.json* ./
-RUN npm install
+RUN npm run preinstall && npm install
 COPY ./frontend /app
 RUN export NODE_OPTIONS=--openssl-legacy-provider && ./node_modules/.bin/vue-cli-service build
 
