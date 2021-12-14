@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "preinstall": "([ ! -f package-lock.json ] && npm install --package-lock-only --ignore-scripts --no-audit); npx npm-force-resolutions",
+    "resolve-install": "npx npm-force-resolutions && npm install",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
@@ -11,9 +13,11 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
+    "@vue/cli-service": "~4.5.0",
     "axios": "^0.24.0",
     "bootstrap": "^4.6.1",
     "core-js": "^3.6.5",
+    "glob-parent": ">=5.1.2",
     "jquery": "^3.6.0",
     "node-sass": "^6.0.1",
     "popper.js": "^1.16.1",
@@ -22,8 +26,7 @@
     "vue-router": "^4.0.12",
     "vue3-cookies": "^1.0.6",
     "vuex": "^4.0.2",
-    "yup": "^0.32.11",
-    "@vue/cli-service": "~4.5.0"
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -33,7 +36,11 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0",
+    "npm-force-resolutions": "^0.0.10",
     "sass-loader": "^10"
+  },
+  "resolutions": {
+    "glob-parent": "6.0.2"
   },
   "eslintConfig": {
     "root": true,
