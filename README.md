@@ -6,6 +6,7 @@ http://localhost:8080/v1/pullrate/28/10/2021
 application front:
 ```
 http://localhost:8080
+
 ```
 
 ".config" file example:
