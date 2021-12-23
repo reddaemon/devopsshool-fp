@@ -20,7 +20,7 @@ import (
 )
 
 func main() {
-	cfgFile, err := config.LoadConfig(".config")
+	cfgFile, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("LoadConfig: %v", err)
 	}

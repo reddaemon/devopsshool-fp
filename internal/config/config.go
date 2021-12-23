@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"log"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -42,11 +43,17 @@ type RedisConfig struct {
 }
 
 // Load config file from given path
-func LoadConfig(filename string) (*viper.Viper, error) {
+func LoadConfig() (*viper.Viper, error) {
 	v := viper.New()
 
-	v.SetConfigName(filename)
 	v.AddConfigPath(".")
+	if os.Getenv("ENV") == "PRODUCTION" {
+		v.SetConfigName(".config")
+	} else if os.Getenv("ENV") == "STAGING" {
+		v.SetConfigName(".stageconfig")
+	} else if os.Getenv("ENV") == "DEV" || os.Getenv("ENV") == "" {
+		v.SetConfigName(".devconfig")
+	}
 	v.SetConfigType("yaml")
 	v.AutomaticEnv()
 	if err := v.ReadInConfig(); err != nil {
