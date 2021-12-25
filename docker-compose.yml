@@ -7,8 +7,8 @@ services:
     container_name: app
     ports:
       - "8080:8080"
-    volumes:
-      - ./internal/migrations:/internal/migrations
+    #volumes:
+      #- ./internal/migrations:/internal/migrations
     env_file:
       - .env
     command: "/scripts/wait --wait \"db:5432\" --command \"echo \"Databases are
