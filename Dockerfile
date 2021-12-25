@@ -16,6 +16,9 @@ FROM scratch
 USER 1001
 WORKDIR /
 COPY --from=builder /app/.config .
+COPY --from=builder /app/.stageconfig .
+COPY --from=builder /app/.devconfig .
+COPY --from=builder /app/internal/migrations /internal/migrations
 COPY --from=builder /app/app .
 COPY --from=front-builder /app/dist /static
 COPY --from=builder /app/scripts/wait /scripts/wait
