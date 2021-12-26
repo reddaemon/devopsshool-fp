@@ -103,7 +103,7 @@ func (u *Usecase) AddUser(ctx context.Context, user *models.User) error {
 
 }
 
-func (u *Usecase) CreateToken(userid uuid.Time) (*models.TokenDetails, error) {
+func (u *Usecase) CreateToken(userid float64) (*models.TokenDetails, error) {
 	td := &models.TokenDetails{}
 	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
 	td.AccessUuid = uuid.New().String()
@@ -135,7 +135,7 @@ func (u *Usecase) CreateToken(userid uuid.Time) (*models.TokenDetails, error) {
 	return td, nil
 }
 
-func (u *Usecase) CreateAuth(ctx context.Context, userid int64, td *models.TokenDetails) error {
+func (u *Usecase) CreateAuth(ctx context.Context, userid float64, td *models.TokenDetails) error {
 	err := u.repo.CreateAuth(ctx, userid, td)
 	if err != nil {
 		return err

@@ -6,6 +6,7 @@ import (
 	"final-project/internal/models"
 	"log"
 	"strings"
+	"fmt"
 
 	"os"
 
@@ -124,7 +125,7 @@ func (i *Instance) AddUser(ctx context.Context, user *models.User) error {
 	return nil
 }
 
-func (I *Instance) CreateAuth(ctx context.Context, userid int64, td *models.TokenDetails) error {
+func (I *Instance) CreateAuth(ctx context.Context, userid float64, td *models.TokenDetails) error {
 	at := time.Unix(td.AtExpires, 0) // converting Unix to UTC
 	rt := time.Unix(td.RtExpires, 0)
 	now := time.Now()
@@ -159,4 +160,24 @@ func (I *Instance) DeleteAuth(ctx context.Context, givenUuid string) (int64, err
 		return 0, err
 	}
 	return deleted, nil
+}
+
+func (I *Instance) DeleteTokens(ctx context.Context, authD *models.AccessDetails) error {
+	//get the refresh uuid
+	refreshUuid := fmt.Sprintf("%s++%d", authD.AccessUuid, authD.UserId)
+	//delete access token
+	deletedAt, err := I.redisConn.Del(ctx, authD.AccessUuid).Result()
+	if err != nil {
+		return err
+	}
+	//delete refresh token
+	deletedRt, err := I.redisConn.Del(ctx, refreshUuid).Result()
+	if err != nil {
+		return err
+	}
+	//When the record is deleted, the return value is 1
+	if deletedAt != 1 || deletedRt != 1 {
+		return errors.New("something went wrong")
+	}
+	return nil
 }
