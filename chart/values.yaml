@@ -8,7 +8,7 @@ image:
   repository: reddaemon/myapp
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v4"
+  tag: "v7"
 
 imagePullSecrets: 
   - name: regcred
@@ -44,14 +44,24 @@ service:
 env:
   ENV: "STAGING"
 
+secrets:
+  accesssecret: "ACCESS_SECRET"
+  refreshsecret: "REFRESH_SECRET"
+  
 ingress:
   enabled: true
   className: ""
-  annotations: {}
+  annotations:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For, X-app123-XPTO"
+    nginx.ingress.kubernetes.io/cors-expose-headers: "*, X-CustomResponseHeader"
+    nginx.ingress.kubernetes.io/cors-max-age: "600"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "false"
   hosts:
-    - host: app.local
+    - host: app.test
       paths:
         - path: /
           pathType: ImplementationSpecific

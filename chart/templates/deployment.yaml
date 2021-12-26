@@ -39,7 +39,16 @@ spec:
           - name: {{ $k }}
             value: {{ $v }}
           {{- end }}
+          {{if .Values.secrets }}
+          {{- range $k, $v := .Values.secrets}}
+          - name: {{ $v }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ $k }}
+                key: {{ $v }}
           {{- end }}
+          {{- end }}
+        {{- end }}
           ports:
             - name: http
               containerPort: 8080
