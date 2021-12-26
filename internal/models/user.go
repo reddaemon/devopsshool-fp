@@ -6,8 +6,8 @@ import (
 )
 
 type AccessDetails struct {
-    AccessUuid string
-    UserId   uint64
+	AccessUuid string
+	UserId     uint64
 }
 
 type Token struct {
@@ -16,17 +16,17 @@ type Token struct {
 }
 
 type TokenDetails struct {
-	AccessToken string
+	AccessToken  string
 	RefreshToken string
-	AccessUuid string
-	RefreshUuid string
-	AtExpires int64
-	RtExpires int64
+	AccessUuid   string
+	RefreshUuid  string
+	AtExpires    int64
+	RtExpires    int64
 }
 
 type User struct {
-	ID uuid.UUID
-	Email string `json:"email"`
+	ID       float64
+	Email    string `json:"email"`
 	Password string `json:"password"`
-	Token string `json:"token"`
+	Token    string `json:"token"`
 }

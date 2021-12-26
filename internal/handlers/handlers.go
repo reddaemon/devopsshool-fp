@@ -129,19 +129,19 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u.ID, err = uuid.NewRandom()
+	u.ID = float64(uuid.ClockSequence())
 	if err != nil {
 		log.Println("cannot create uuid")
 	}
 
-	ts, err := h.uc.CreateToken(u.ID.Time())
+	ts, err := h.uc.CreateToken(u.ID)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
 
-	saveErr := h.uc.CreateAuth(ctx, int64(u.ID.Time()), ts)
+	saveErr := h.uc.CreateAuth(ctx, u.ID, ts)
 	if saveErr != nil {
 		w.Write([]byte(saveErr.Error()))
 		w.WriteHeader(http.StatusUnprocessableEntity)
@@ -197,8 +197,16 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
+	providedToken := middleware.ExtractToken(r)
 	ctx := r.Context()
-	mapToken := map[string]string{}
+	mapToken := map[string]string{"refresh_token": providedToken}
+	_, err := json.Marshal(mapToken)
+	if err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.Header().Add("Content-Type", "application/json")
+		w.Write([]byte(err.Error()))
+		return
+	}
 	refreshtoken := mapToken["refresh_token"]
 
 	//verify the token
@@ -209,12 +217,15 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 		}
 		return []byte(os.Getenv("REFRESH_SECRET")), nil
 	})
+	//if there is an error, the token must have expired
 	if err != nil {
+		log.Printf("token expired error: %s", err.Error())
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Header().Add("Content-Type", "application/json")
 		w.Write([]byte("Refresh token expired"))
 		return
 	}
+
 	//is token valid?
 	if _, ok := token.Claims.(jwt.StandardClaims); !ok && !token.Valid {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -223,11 +234,11 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	//Since token is valid, get the uuid:
 	claims, ok := token.Claims.(jwt.MapClaims) // the token claims should conform to MapClaims
 	if ok && token.Valid {
-		refreshUuid, ok := claims["refresh_uuid"].(string) // convert interface to string
-		if !ok {
+		refreshUuid := claims["refresh_uuid"].(float64) // convert interface to string
+		/*if !ok {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			w.Header().Add("Content-Type", "application/json")
-		}
+		}*/
 
 		//userId, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["user_id"]), 10, 64)
 		userId := claims["user_id"]
@@ -237,22 +248,26 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Error occurred"))
 			return
 		}
+		refreshUuidStr := fmt.Sprintf("%f", refreshUuid)
 
 		// Delete the previous Refresh Token
-		deleted, err := h.uc.DeleteAuth(ctx, refreshUuid)
-		if err != nil || deleted == 0 {
-			w.WriteHeader(http.StatusUnauthorized)
+		deleted, err := h.uc.DeleteAuth(ctx, refreshUuidStr)
+		if err != nil {
+			log.Printf("deleted: %d", deleted)
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			w.Header().Add("Content-Type", "application/json")
+			w.Write([]byte("unauthorized"))
 			return
 		}
 		// Create new pairs of refresh and access tokens
-		ts, err := h.uc.CreateToken(userId.(uuid.Time))
+		ts, err := h.uc.CreateToken(userId.(float64))
 		if err != nil {
 			w.WriteHeader(http.StatusForbidden)
 			w.Header().Add("Content-Type", "application/json")
 			return
 		}
 		// save the tokens metadata to redis
-		err = h.uc.CreateAuth(ctx, userId.(int64), ts)
+		err = h.uc.CreateAuth(ctx, userId.(float64), ts)
 		if err != nil {
 			w.WriteHeader(http.StatusForbidden)
 			w.Header().Add("Content-Type", "application/json")

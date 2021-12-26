@@ -1,6 +1,6 @@
 import api from './api'
 
-const API_URL = 'http://localhost:8080/v1/'
+const API_URL = process.env.VUE_APP_ROOT_API
 
 class DataService {
     getRate() {
