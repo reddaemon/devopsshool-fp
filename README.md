@@ -56,3 +56,8 @@ POSTGRES_PASSWORD=
 ACCESS_SECRET=
 REFRESH_SECRET=
 ```
+
+wait script for docker-compose:
+```
+mkdir -p ./scripts && cd ./scripts && wget https://github.com/adrian-gheorghe/wait-go/releases/download/1.0.0/wait-go-linux -P ./scripts -O wait
+```
