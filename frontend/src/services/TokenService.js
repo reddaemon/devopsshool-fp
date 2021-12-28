@@ -18,7 +18,7 @@ class TokenService {
     updateLocalAccessToken(token) {
         //let user = JSON.parse(localStorage.getItem("user"))
         let user = cookies.get("user")
-        user.acccess_token = token;
+        user.access_token = token;
         //localStorage.SetItem("user", JSON.stringify("user"))
         cookies.set("user", user)
     }
@@ -31,7 +31,7 @@ class TokenService {
     setUser(user) {
         //localStorage.setItem("user", JSON.stringify(user));
         let expires = (new Date(Date.now()+ 86400)).toUTCString();
-        cookies.set("user", user, expires, "", "", true, "Strict")
+        cookies.set("user", user, expires, "", "")
     }
 
     removeUser() {

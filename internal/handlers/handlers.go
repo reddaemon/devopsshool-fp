@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strconv"
 
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/google/uuid"
@@ -168,6 +169,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	au, err := middleware.ExtractTokenMetadata(r)
+
 	if err != nil {
 		log.Println("cannot extract token metadata...")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -175,9 +177,10 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("unauthorized"))
 		return
 	}
-	log.Println("au.AccessUuid: ", au.AccessUuid)
+
 	deleted, err := h.uc.DeleteAuth(ctx, au.AccessUuid)
-	if err != nil || deleted == 0 { //if any goes wrong
+	if err != nil { //if any goes wrong
+		log.Printf("%d", deleted)
 		log.Println("cannot delete auth for accessUUid")
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Header().Add("Content-Type", "application/json")
@@ -234,14 +237,14 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	//Since token is valid, get the uuid:
 	claims, ok := token.Claims.(jwt.MapClaims) // the token claims should conform to MapClaims
 	if ok && token.Valid {
-		refreshUuid := claims["refresh_uuid"].(float64) // convert interface to string
-		/*if !ok {
+		refreshUuid, ok := claims["refresh_uuid"].(float64) // convert interface to string
+		if !ok {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			w.Header().Add("Content-Type", "application/json")
-		}*/
+		}
 
-		//userId, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["user_id"]), 10, 64)
-		userId := claims["user_id"]
+		userId, err := strconv.ParseFloat(fmt.Sprintf("%.f", claims["user_id"]), 64)
+		//userId := claims["user_id"]
 		if err != nil {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			w.Header().Add("Content-Type", "application/json")
@@ -260,14 +263,14 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// Create new pairs of refresh and access tokens
-		ts, err := h.uc.CreateToken(userId.(float64))
+		ts, err := h.uc.CreateToken(userId)
 		if err != nil {
 			w.WriteHeader(http.StatusForbidden)
 			w.Header().Add("Content-Type", "application/json")
 			return
 		}
 		// save the tokens metadata to redis
-		err = h.uc.CreateAuth(ctx, userId.(float64), ts)
+		err = h.uc.CreateAuth(ctx, userId, ts)
 		if err != nil {
 			w.WriteHeader(http.StatusForbidden)
 			w.Header().Add("Content-Type", "application/json")
