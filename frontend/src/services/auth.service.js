@@ -30,7 +30,7 @@ class AuthService {
 
     register(email, password) {
         return api
-          .post(API_URL + 'signup', {
+          .post(API_URL + 'register', {
               email,
               password
           });

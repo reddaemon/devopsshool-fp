@@ -54,6 +54,6 @@ func main() {
 
 	h := handlers.NewHandler(uc)
 	router := router.RegisterRouter(h)
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(":8085", router)
 
 }
