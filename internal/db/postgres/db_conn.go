@@ -13,7 +13,7 @@ import (
 
 func NewPsqlDb(c *config.Config) (*pgxpool.Pool, error) {
 	if os.Getenv("ENV") == "PRODUCTION" {
-		connStr := fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=require&connect_timeout=%d",
+		connStr := fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=verify-ca&connect_timeout=%d",
 			"postgres",
 			url.QueryEscape(c.Postgres.PostgresqlUser),
 			url.QueryEscape(c.Postgres.PostgresqlPassword),

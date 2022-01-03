@@ -5,6 +5,8 @@ import (
 	"final-project/internal/config"
 	"os"
 
+	"crypto/tls"
+
 	"github.com/go-redis/redis/v8"
 )
 
@@ -15,6 +17,9 @@ func NewRedisConn(c *config.Config) (*redis.Client, error) {
 			//Username: c.Redis.RedisUsername,
 			Password: c.Redis.RedisPassword,
 			DB:       0,
+			TLSConfig: &tls.Config{
+				MinVersion: tls.VersionTLS12,
+			},
 		})
 		ctx := context.Background()
 		_, err := rdb.Ping(ctx).Result()
