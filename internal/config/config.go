@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"log"
 	"os"
 
@@ -43,8 +42,9 @@ type RedisConfig struct {
 }
 
 // Load config file from given path
-func LoadConfig() (*viper.Viper, error) {
+func LoadConfig() (*Config, error) {
 	v := viper.New()
+	var c Config
 
 	v.AddConfigPath(".")
 	if os.Getenv("ENV") == "PRODUCTION" {
@@ -54,16 +54,19 @@ func LoadConfig() (*viper.Viper, error) {
 	} else if os.Getenv("ENV") == "DEV" || os.Getenv("ENV") == "" {
 		v.SetConfigName(".devconfig")
 	}
-	v.SetConfigType("yaml")
 	v.AutomaticEnv()
-	if err := v.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			return nil, errors.New("config file not found")
-		}
-		return nil, err
-	}
+	c.Postgres.PostgresqlDbname = v.GetString("POSTGRES_DB_NAME")
+	c.Postgres.PostgresqlHost = v.GetString("POSTGRES_HOST")
+	c.Postgres.PostgresqlUser = v.GetString("POSTGRES_USER")
+	c.Postgres.PostgresqlPassword = v.GetString("POSTGRES_PASSWORD")
+	c.Postgres.PostgresqlPort = v.GetString("POSTGRES_PORT")
+	c.Postgres.PostgresqlSSLMode = v.GetBool("POSTGRES_SSL_MODE")
+	c.Redis.RedisHost = v.GetString("REDIS_HOST")
+	c.Redis.RedisPort = v.GetString("REDIS_PORT")
+	c.Redis.RedisUsername = v.GetString("REDIS_USER")
+	c.Redis.RedisPassword = v.GetString("REDIS_PASSWORD")
 
-	return v, nil
+	return &c, nil
 }
 
 // Parse config file
