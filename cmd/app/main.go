@@ -20,15 +20,11 @@ import (
 )
 
 func main() {
-	cfgFile, err := config.LoadConfig()
+	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("LoadConfig: %v", err)
 	}
 
-	cfg, err := config.ParseConfig(cfgFile)
-	if err != nil {
-		log.Fatalf("ParseConfig: %v", err)
-	}
 	psqlDB, err := postgres.NewPsqlDb(cfg)
 	if err != nil {
 		log.Fatalf("Postgresql init: %s", err)
