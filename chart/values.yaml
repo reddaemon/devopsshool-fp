@@ -1,0 +1,111 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: labcontainerregistry1.azurecr.io/myapp
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.0.6"
+
+imagePullSecrets: 
+  - name: regcred
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8085
+
+env:
+  ENV: "PRODUCTION"
+  POSTGRES_DB_NAME: "currency" 
+  POSTGRES_HOST: lab-pg-server.postgres.database.azure.com
+  POSTGRES_USER: "db_user@lab-pg-server"
+  POSTGRES_PORT: "5432"
+  REDIS_HOST: lab-redis.privatelink.redis.cache.windows.net
+  REDIS_PORT: "6379"
+secrets:
+  accesssecret: "ACCESS_SECRET"
+  refreshsecret: "REFRESH_SECRET"
+  postgressecret: "POSTGRES_PASSWORD"
+  redissecret: "REDIS_PASSWORD"
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    # kubernetes.io/tls-acme: "true"
+
+  hosts:
+    - host: app.test
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+provider: azure
+secretProviderClass: azure-kvname
+parameters:
+  usePodIdentity: "false"
+  useVMManagedIdentity: "false"
+  userAssignedIdentityID: ""
+  keyvaultName: ""
+  objects: |
+      array:
+        - |
+          objectName: accesssecret              
+          objectType: secret
+          objectVersion: ""
+  tenantId: ""
