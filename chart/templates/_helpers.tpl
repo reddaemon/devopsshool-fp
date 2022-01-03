@@ -60,3 +60,11 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+
+{{- define "KEYVAULT_NAME" -}}
+echo -n `az keyvault list | jq -r '.[0].name`
+{{- end}}
+{{- define "TENANT_ID" -}}
+echo -n `az account show | jq -r '.tenantId`
+{{- end}}
