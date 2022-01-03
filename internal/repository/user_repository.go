@@ -4,16 +4,16 @@ import (
 	"context"
 	"errors"
 	"final-project/internal/models"
+	"fmt"
 	"log"
 	"strings"
-	"fmt"
 
 	"os"
 
 	"strconv"
 	"time"
 
-	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
 	"golang.org/x/crypto/bcrypt"

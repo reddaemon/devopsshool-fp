@@ -3,7 +3,6 @@ module final-project
 go 1.17
 
 require (
-	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/go-chi/chi/v5 v5.0.5
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/google/uuid v1.1.2
@@ -15,6 +14,8 @@ require (
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
 	golang.org/x/net v0.0.0-20211020060615-d418f374d309
 )
+
+require github.com/golang-jwt/jwt/v4 v4.2.0
 
 require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
