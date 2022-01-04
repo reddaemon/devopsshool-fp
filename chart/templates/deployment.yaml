@@ -37,7 +37,7 @@ spec:
           env:
           {{- range $k, $v := .Values.env }}
           - name: {{ $k }}
-            value: {{ $v }}
+            value: {{ $v | quote }}
           {{- end }}
           {{if .Values.secrets }}
           {{- range $k, $v := .Values.secrets}}
@@ -63,6 +63,10 @@ spec:
               port: 8085
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - name: {{ .Values.secretVolumeName }}
+            mountPath: {{ .Values.secretMountPath }}
+            readOnly: true
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -76,10 +80,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      - name: secrets-store-inline
+      - name: {{ .Values.secretVolumeName }}
         csi:
-          driver: secrets-store.csi.k8s.io
+          driver: {{ .Values.secretDriverName }}
           readOnly: true
           volumeAttributes:
-            secretProviderClass: "azure-kvname"
+            secretProviderClass: {{ .Values.secretProviderClass }}
 
