@@ -44,10 +44,10 @@ service:
 env:
   ENV: "PRODUCTION"
   POSTGRES_DB_NAME: "currency" 
-  POSTGRES_HOST: lab-pg-server.postgres.database.azure.com
+  POSTGRES_HOST: "lab-pg-server.postgres.database.azure.com"
   POSTGRES_USER: "db_user@lab-pg-server"
   POSTGRES_PORT: "5432"
-  REDIS_HOST: lab-redis.privatelink.redis.cache.windows.net
+  REDIS_HOST: "lab-redis.privatelink.redis.cache.windows.net"
   REDIS_PORT: "6379"
 secrets:
   accesssecret: "ACCESS_SECRET"
@@ -97,6 +97,9 @@ tolerations: []
 affinity: {}
 provider: azure
 secretProviderClass: azure-kvname
+secretVolumeName: secrets-store-inline
+secretDriverName: secrets-store.csi.k8s.io
+secretMountPath: "/mnt/secrets"
 parameters:
   usePodIdentity: "false"
   useVMManagedIdentity: "false"
