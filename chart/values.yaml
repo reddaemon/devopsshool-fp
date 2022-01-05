@@ -8,7 +8,7 @@ image:
   repository: labcontainerregistry1.azurecr.io/myapp
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.0.6"
+  tag: "1.0.7"
 
 imagePullSecrets: 
   - name: regcred
@@ -47,6 +47,7 @@ env:
   POSTGRES_HOST: "lab-pg-server.postgres.database.azure.com"
   POSTGRES_USER: "db_user@lab-pg-server"
   POSTGRES_PORT: "5432"
+  POSTGRES_SSL_MODE: "require"
   REDIS_HOST: "lab-redis.privatelink.redis.cache.windows.net"
   REDIS_PORT: "6379"
 secrets:
@@ -96,19 +97,35 @@ tolerations: []
 
 affinity: {}
 provider: azure
-secretProviderClass: azure-kvname
+secretProviderClass: azure-kvname-system-msi
 secretVolumeName: secrets-store-inline
 secretDriverName: secrets-store.csi.k8s.io
 secretMountPath: "/mnt/secrets"
 parameters:
   usePodIdentity: "false"
-  useVMManagedIdentity: "false"
-  userAssignedIdentityID: ""
+  useVMManagedIdentity: "true"
+  userAssignedIdentityID: "71de97f4-9666-46b7-a9fa-7fde7b662ce9"
   keyvaultName: ""
   objects: |
       array:
         - |
           objectName: accesssecret              
           objectType: secret
+          objectAlias: accesssecret
+          objectVersion: ""
+        - |
+          objectName: refreshsecret              
+          objectType: secret
+          objectAlias: refreshsecret
+          objectVersion: ""
+        - |
+          objectName: redissecret              
+          objectType: secret
+          objectAlias: redissecret
+          objectVersion: ""
+        - |
+          objectName: postgressecret              
+          objectType: secret
+          objectAlias: postgressecret
           objectVersion: ""
   tenantId: ""

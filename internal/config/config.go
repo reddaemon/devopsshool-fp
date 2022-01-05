@@ -30,7 +30,7 @@ type PostgresConfig struct {
 	PostgresqlUser     string
 	PostgresqlPassword string
 	PostgresqlDbname   string
-	PostgresqlSSLMode  bool
+	PostgresqlSSLMode  string
 }
 
 // Redis config
@@ -60,7 +60,7 @@ func LoadConfig() (*Config, error) {
 	c.Postgres.PostgresqlUser = v.GetString("POSTGRES_USER")
 	c.Postgres.PostgresqlPassword = v.GetString("POSTGRES_PASSWORD")
 	c.Postgres.PostgresqlPort = v.GetString("POSTGRES_PORT")
-	c.Postgres.PostgresqlSSLMode = v.GetBool("POSTGRES_SSL_MODE")
+	c.Postgres.PostgresqlSSLMode = v.GetString("POSTGRES_SSL_MODE")
 	c.Redis.RedisHost = v.GetString("REDIS_HOST")
 	c.Redis.RedisPort = v.GetString("REDIS_PORT")
 	c.Redis.RedisUsername = v.GetString("REDIS_USER")
