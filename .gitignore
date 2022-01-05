@@ -23,3 +23,4 @@ scripts/
 
 # node
 node_modules
+test-pod.yml
