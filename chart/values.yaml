@@ -104,7 +104,11 @@ secretMountPath: "/mnt/secrets"
 parameters:
   usePodIdentity: "false"
   useVMManagedIdentity: "true"
+<<<<<<< HEAD
   userAssignedIdentityID: ""
+=======
+  userAssignedIdentityID: "71de97f4-9666-46b7-a9fa-7fde7b662ce9"
+>>>>>>> main
   keyvaultName: ""
   objects: |
       array:
