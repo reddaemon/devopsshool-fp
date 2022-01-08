@@ -8,7 +8,7 @@ image:
   repository: labcontainerregistry1.azurecr.io/myapp
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "1.0.8"
+  tag: "1.0.10"
 
 imagePullSecrets: 
   - name: regcred
@@ -49,6 +49,7 @@ env:
   POSTGRES_PORT: "5432"
   POSTGRES_SSL_MODE: "require"
   REDIS_HOST: "redis-master.infra.svc.cluster.local"
+  REDIS_USER: ""
   REDIS_PORT: "6379"
 secrets:
   accesssecret: "ACCESS_SECRET"
@@ -104,11 +105,7 @@ secretMountPath: "/mnt/secrets"
 parameters:
   usePodIdentity: "false"
   useVMManagedIdentity: "true"
-<<<<<<< HEAD
   userAssignedIdentityID: ""
-=======
-  userAssignedIdentityID: "71de97f4-9666-46b7-a9fa-7fde7b662ce9"
->>>>>>> main
   keyvaultName: ""
   objects: |
       array:
