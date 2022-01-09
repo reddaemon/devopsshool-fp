@@ -55,7 +55,7 @@ jobs:
         resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
               
     - run: |
-        helm upgrade --install app --set repository=${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }} --set tag=${{ github.sha }} --set parameters.keyvaultName=${{ env.KEYVAULT_NAME }} --set parameters.tenantId=${{ env.TENANT_ID }} --set parameters.userAssignedIdentityID=${{ env.USER_CLIENT_ID }} ./chart/ -f ./chart/values.yaml --create-namespace -n app
+        helm upgrade --install app --set image.repository=${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }} --set image.tag=${{ github.sha }} --set parameters.keyvaultName=${{ env.KEYVAULT_NAME }} --set parameters.tenantId=${{ env.TENANT_ID }} --set parameters.userAssignedIdentityID=${{ env.USER_CLIENT_ID }} ./chart/ -f ./chart/values.yaml --create-namespace -n app
         
       
 
