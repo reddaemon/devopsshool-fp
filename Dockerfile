@@ -19,5 +19,4 @@ WORKDIR /
 COPY --from=builder /app/internal/migrations /internal/migrations
 COPY --from=builder /app/app .
 COPY --from=front-builder /app/dist /static
-COPY --from=builder /app/scripts/wait /scripts/wait
 ENTRYPOINT ["./app"]
