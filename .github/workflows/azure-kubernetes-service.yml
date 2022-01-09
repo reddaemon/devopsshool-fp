@@ -1,14 +1,12 @@
 env:
-  REGISTRY_NAME: labcontainerregistry1.azurecr.io
+  REGISTRY_NAME: labcontainerregistry1
   CLUSTER_NAME: finaltask
   CLUSTER_RESOURCE_GROUP: final-project-rg
   NAMESPACE: app
   APP_NAME: app-test
+  BUILD_MODE: production
 
 on:
-  push:
-    branches:
-    - main
   pull_request:
     branches:
     - main
@@ -34,7 +32,7 @@ jobs:
     
     # Container build and push to a Azure Container Registry (ACR)
     - run: |
-        docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+        docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }} --build-arg mode=${{ env.BUILD_MODE }}
         docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
     
 
