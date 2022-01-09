@@ -22,6 +22,10 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - run: |
+        echo "KEYVAULT_NAME=$(az keyvault list | jq -r '.[0].name')" >> $GITHUB_ENV
+        echo "TENANT_ID=$(az account show | jq -r '.tenantId')" >> $GITHUB_ENV
+        echo "USER_CLIENT_ID=$(az aks show -g ${{ env.CLUSTER_RESOURCE_GROUP}} -n ${{ env.CLUSTER_NAME }} --query identityProfile.kubeletidentity.clientId -o tsv)" >> $GITHUB_ENV
     
     # Connect to Azure Container Registry (ACR)
     - uses: azure/docker-login@v1
@@ -35,6 +39,23 @@ jobs:
         docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }} --build-arg mode=${{ env.BUILD_MODE }}
         docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
     
-
-
+    - name: Helm tool installer
+      uses: Azure/setup-helm@v1
+      with:
+        # Version of helm
+        version: 3.7.2
+        # Github token
+        token: ${{ github.token }}
+    
+   # Set the target Azure Kubernetes Service (AKS) cluster. 
+    - uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ env.CLUSTER_NAME }}
+        resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+              
+    - run: |
+        helm upgrade --install app --set parameters.keyvaultName=${{ env.KEYVAULT_NAME }} --set parameters.tenantId=${{ env.TENANT_ID }} --set parameters.userAssignedIdentityID=${{ env.USER_CLIENT_ID }} ./chart/ -f ./chart/values.yaml --create-namespace -n app
+        
+      
 
