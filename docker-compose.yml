@@ -1,21 +1,19 @@
 version: '3.8'
 services:
-  #app:
-  #  build:
-  #    dockerfile: Dockerfile
-  #    context: .
-  #  container_name: app
-  #  ports:
-  #    - "8080:8080"
-  #  #volumes:
-  #    #- ./internal/migrations:/internal/migrations
-  #  env_file:
-  #    - .env
-  #  command: "/scripts/wait --wait \"db:5432\" --command \"echo \"Databases are
-  #    up\"\" --timeout 30"
-  #  networks:
-  #    - db
-  #    - redis
+  app:
+    image: "final-project-app:latest" 
+    container_name: app
+    ports:
+      - "8080:8080"
+    #volumes:
+      #- ./internal/migrations:/internal/migrations
+    env_file:
+      - .env
+    command: "/scripts/wait --wait \"db:5432\" --command \"echo \"Databases are
+      up\"\" --timeout 30"
+    networks:
+      - db
+      - redis
 
   pgdb:
     image: "postgres:14-alpine"
