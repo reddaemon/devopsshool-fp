@@ -1,3 +1,10 @@
+env:
+  REGISTRY_NAME: labcontainerregistry1.azurecr.io
+  CLUSTER_NAME: finaltask
+  CLUSTER_RESOURCE_GROUP: final-project-rg
+  NAMESPACE: app
+  APP_NAME: app-test
+
 on:
   push:
     branches:
