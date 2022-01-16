@@ -4,7 +4,7 @@ services:
     image: "final-project-app:latest" 
     container_name: app
     ports:
-      - "8080:8080"
+      - "8085:8085"
     #volumes:
       #- ./internal/migrations:/internal/migrations
     env_file:
