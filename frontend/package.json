@@ -3,20 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "preinstall": "([ ! -f package-lock.json ] && npm install --package-lock-only --ignore-scripts --no-audit); npx npm-force-resolutions",
-    "resolve-install": "npx npm-force-resolutions && npm install",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "preinstall": "([ ! -f package-lock.json ] && npm install --package-lock-only --ignore-scripts --no-audit); npx npm-force-resolutions",
+    "resolve-install": "npx npm-force-resolutions && npm install"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
-    "@vue/cli-service": "~4.5.0",
     "axios": "^0.24.0",
     "bootstrap": "^4.6.1",
-    "core-js": "^3.6.5",
+    "core-js": "^3.8.3",
     "glob-parent": ">=5.1.2",
     "jquery": "^3.6.0",
     "node-sass": "^6.0.1",
@@ -29,18 +28,15 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@babel/eslint-parser": "^7.16.5",
+    "@vue/cli-plugin-babel": "~5.0.0-rc.2",
+    "@vue/cli-plugin-eslint": "~5.0.0-rc.2",
+    "@vue/cli-service": "~5.0.0-rc.2",
     "@vue/compiler-sfc": "^3.0.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
+    "eslint": "^8.6.0",
     "eslint-plugin-vue": "^7.0.0",
     "npm-force-resolutions": "^0.0.10",
     "sass-loader": "^10"
-  },
-  "resolutions": {
-    "glob-parent": "6.0.2"
   },
   "eslintConfig": {
     "root": true,
@@ -52,7 +48,8 @@
       "eslint:recommended"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@babel/eslint-parser",
+      "requireConfigFile": false
     },
     "rules": {}
   },
@@ -60,5 +57,8 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "resolutions": {
+    "glob-parent": "6.0.2"
+  }
 }
