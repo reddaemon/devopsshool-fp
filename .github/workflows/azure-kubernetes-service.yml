@@ -100,7 +100,9 @@ jobs:
         cluster-name: ${{ env.CLUSTER_NAME }}
         resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
               
-    - run: |
+    - name: deploy to k8s
+      uses: actions/checkout@master
+      run: |
         helm upgrade --install app --set image.repository=${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }} \
          --set image.tag=${{ github.sha }} \
          --set parameters.keyvaultName=${{ env.KEYVAULT_NAME }} \
