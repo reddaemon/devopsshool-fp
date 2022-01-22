@@ -63,7 +63,7 @@ jobs:
         echo "COMMON_NAME=app-staging.eastus.cloudapp.azure.com" >> $GITHUB_ENV
         echo "DNS_NAME=app-staging.eastus.cloudapp.azure.com" >> $GITHUB_ENV
         echo "NAMESPACE=staging" >> $GITHUB_ENV
-        echo "POSTGRES_HOST=${{secrets.DB_HOST}}" >> $GITHUB_ENV
+        echo "POSTGRES_HOST='${{secrets.DB_HOST}}"' >> $GITHUB_ENV
 
     - name: Set env vars (prod)
       if: github.event.pull_request.base.ref == 'main'
@@ -76,7 +76,7 @@ jobs:
         echo "COMMON_NAME=app-prod.eastus.cloudapp.azure.com" >> $GITHUB_ENV
         echo "DNS_NAME=app-prod.eastus.cloudapp.azure.com" >> $GITHUB_ENV
         echo "NAMESPACE=prod" >> $GITHUB_ENV
-        echo "POSTGRES_HOST=${{secrets.DB_HOST}}" >> $GITHUB_ENV
+        echo "POSTGRES_HOST='${{secrets.DB_HOST}}'" >> $GITHUB_ENV
 
     - name: Azure Login
       uses: azure/login@v1
