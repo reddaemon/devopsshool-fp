@@ -2,20 +2,27 @@ env:
   REGISTRY_NAME: labcontainerregistry1
   CLUSTER_NAME: finaltask
   CLUSTER_RESOURCE_GROUP: final-project-rg
-  NAMESPACE: app
-  APP_NAME: app-test
-  BUILD_MODE: production
 
 on:
   pull_request:
     branches:
     - main
+    - staging
     
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Set env vars (staging)
+      if: endsWith(github.ref, '/staging')
+      run: |
+        echo "BUILD_MODE=staging" >> $GITHUB_ENV
+    - name: Set env vars (prod)
+      if: endsWith(github.ref, '/main')
+      run: |
+        echo "BUILD_MODE=production" >> $GITHUB_ENV
+
     - uses: actions/checkout@master
     
     - name: Azure Login
@@ -38,7 +45,45 @@ jobs:
     - run: |
         docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }} --build-arg mode=${{ env.BUILD_MODE }}
         docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
-    
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Set env vars (staging)
+      if: endsWith(github.ref, '/staging')
+      run: |
+
+        echo "APP_HOSTNAME=app-staging" >> $GITHUB_ENV
+        echo "SECRET_NAME=app-staging-tls" >> $GITHUB_ENV
+        echo "CLUSTER_ISSUER_NAME=letsencrypt-staging" >> $GITHUB_ENV
+        echo "CLUSTER_ISSUER_SECRET_KEY=letsencrypt-staging" >> $GITHUB_ENV
+        echo "CERTIFICATE_NAME=app-staging-tls" >> $GITHUB_ENV
+        echo "COMMON_NAME=app-staging.eastus.cloudapp.azure.com" >> $GITHUB_ENV
+        echo "DNS_NAME=app-staging.eastus.cloudapp.azure.com" >> $GITHUB_ENV
+        echo "NAMESPACE=staging"
+
+    - name: Set env vars (prod)
+      if: endsWith(github.ref, '/main')
+      run: |
+        echo "APP_HOSTNAME=app-prod" >> $GITHUB_ENV
+        echo "SECRET_NAME=app-prod-tls" >> $GITHUB_ENV
+        echo "CLUSTER_ISSUER_NAME=letsencrypt-prod" >> $GITHUB_ENV
+        echo "CLUSTER_ISSUER_SECRET_KEY=letsencrypt-prod" >> $GITHUB_ENV
+        echo "CERTIFICATE_NAME=app-prod-tls" >> $GITHUB_ENV
+        echo "COMMON_NAME=app-prod.eastus.cloudapp.azure.com" >> $GITHUB_ENV
+        echo "DNS_NAME=app-prod.eastus.cloudapp.azure.com" >> $GITHUB_ENV
+        echo "NAMESPACE=prod"
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - run: |
+        echo "KEYVAULT_NAME=$(az keyvault list | jq -r '.[0].name')" >> $GITHUB_ENV
+        echo "TENANT_ID=$(az account show | jq -r '.tenantId')" >> $GITHUB_ENV
+        echo "USER_CLIENT_ID=$(az aks show -g ${{ env.CLUSTER_RESOURCE_GROUP}} -n ${{ env.CLUSTER_NAME }} --query identityProfile.kubeletidentity.clientId -o tsv)" >> $GITHUB_ENV
+
     - name: Helm tool installer
       uses: Azure/setup-helm@v1
       with:
@@ -55,7 +100,23 @@ jobs:
         resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
               
     - run: |
-        helm upgrade --install app --set image.repository=${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }} --set image.tag=${{ github.sha }} --set parameters.keyvaultName=${{ env.KEYVAULT_NAME }} --set parameters.tenantId=${{ env.TENANT_ID }} --set parameters.userAssignedIdentityID=${{ env.USER_CLIENT_ID }} ./chart/ -f ./chart/values.yaml --create-namespace -n app
+        helm upgrade --install app --set image.repository=${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }} \
+         --set image.tag=${{ github.sha }} \
+         --set parameters.keyvaultName=${{ env.KEYVAULT_NAME }} \
+         --set parameters.tenantId=${{ env.TENANT_ID }} \
+         --set parameters.userAssignedIdentityID=${{ env.USER_CLIENT_ID }} \
+         --set ingress.annotations.cert-manager.io/cluster-issuer=${{ env.CLUSTER_ISSUER_NAME }} \
+         --set ingress.hosts.host=${{ env.APP_HOSTNAME }} \
+         --set ingress.tls.secretName=${{ env.SECRET_NAME }} \
+         --set ingress.tls.hosts=${{ env.APP_HOSTNAME }} \
+         --set clusterIssuer.name=${{ env.CLUSTER_ISSUER_NAME }} \
+         --set clusterIssuer.secretKey=${{ env.CLUSTER_ISSUER_SECRET_KEY }} \
+         --set certificate.name=${{ env.CERTIFICATE_NAME }} \
+         --set certificate.secretName=${{ env.SECRET_NAME }} \
+         --set certificate.commonName=${{ env.COMMON_NAME }} \
+         --set certificate.dnsName=${{ env.DNS_NAME }} \
+         --set env.POSTGRES_HOST=${{ secrets.DB_HOST }}
+         ./chart/ -f ./chart/values.yaml --create-namespace -n ${{ env.NAMESPACE }}
         
       
 
