@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Set env vars (staging)
-      if: endsWith(github.ref, '/staging')
+      if: github.event.pull_request.base.ref == 'staging'
       run: |
         echo "BUILD_MODE=staging" >> $GITHUB_ENV
     - name: Set env vars (prod)
-      if: endsWith(github.ref, '/main')
+      if: github.event.pull_request.base.ref == 'main'
       run: |
         echo "BUILD_MODE=production" >> $GITHUB_ENV
 
@@ -51,7 +51,7 @@ jobs:
     needs: build
     steps:
     - name: Set env vars (staging)
-      if: endsWith(github.ref, '/staging')
+      if: github.event.pull_request.base.ref == 'staging'
       run: |
 
         echo "APP_HOSTNAME=app-staging" >> $GITHUB_ENV
@@ -64,7 +64,7 @@ jobs:
         echo "NAMESPACE=staging"
 
     - name: Set env vars (prod)
-      if: endsWith(github.ref, '/main')
+      if: github.event.pull_request.base.ref == 'main'
       run: |
         echo "APP_HOSTNAME=app-prod" >> $GITHUB_ENV
         echo "SECRET_NAME=app-prod-tls" >> $GITHUB_ENV
