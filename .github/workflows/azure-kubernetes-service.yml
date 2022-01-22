@@ -2,6 +2,7 @@ env:
   REGISTRY_NAME: labcontainerregistry1
   CLUSTER_NAME: finaltask
   CLUSTER_RESOURCE_GROUP: final-project-rg
+  APP_NAME: myapp
 
 on:
   pull_request:
