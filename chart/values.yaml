@@ -44,7 +44,7 @@ service:
 env:
   ENV: "PRODUCTION"
   POSTGRES_DB_NAME: "currency" 
-  POSTGRES_HOST: "lab-pg-server.postgres.database.azure.com"
+  POSTGRES_HOST: ""
   POSTGRES_USER: "db_user@lab-pg-server"
   POSTGRES_PORT: "5432"
   POSTGRES_SSL_MODE: "require"
@@ -65,14 +65,14 @@ ingress:
     kubernetes.io/tls-acme: "true"
 
   hosts:
-    - host: app-test.eastus.cloudapp.azure.com
+    - host: app.local
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls: 
-  - secretName: app-test.eastus.cloudapp.azure.com-tls
+  - secretName: app-prod-tls
     hosts:
-      - app-test.eastus.cloudapp.azure.com
+      - app.local
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -131,3 +131,15 @@ parameters:
           objectAlias: postgressecret
           objectVersion: ""
   tenantId: ""
+
+
+clusterIssuer:
+  name: ""
+  secretKey: ""
+  ingressClass: "nginx"
+
+certificate:
+  name: ""
+  secretName: ""
+  commonName: ""
+  dnsName: ""
