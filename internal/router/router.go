@@ -5,8 +5,10 @@ import (
 	"final-project/internal/middleware"
 	"net/http"
 
+	chiprometheus "github.com/766b/chi-prometheus"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func RegisterRouter(handler *handlers.Handler) *chi.Mux {
@@ -21,9 +23,11 @@ func RegisterRouter(handler *handlers.Handler) *chi.Mux {
 		AllowCredentials: false,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
+	r.Use(chiprometheus.NewMiddleware("my-api"))
 
 	//r.Use(middleware.Logger)
 	r.Handle("/*", http.StripPrefix("/", http.FileServer(http.Dir("static"))))
+	r.Handle("/metrics", promhttp.Handler())
 	r.Route("/v1", func(r chi.Router) {
 		dataGroup := r.Group(nil)
 		dataGroup.Use(middleware.TokenAuthMiddleware)
