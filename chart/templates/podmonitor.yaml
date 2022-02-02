@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "chart.fullname" .  }}
+  labels:
+    {{- toYaml .Values.podmonitor.labels | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: {{ .Values.podmonitor.label }}
+  podMetricsEndpoints:
+  - port: {{ .Values.podmonitor.port }}
