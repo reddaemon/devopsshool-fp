@@ -5,10 +5,10 @@ metadata:
   labels:
     "use-http01-solver": "true"
 spec:
-  secretName: {{ .Values.certificate.secretName }}
+  secretName: {{ .Values.certificate.secretname }}
   issuerRef:
-    name: {{ .Values.clusterIssuer.secretKey }}
+    name: {{ .Values.clusterissuer.secretkey }}
     kind: ClusterIssuer
-  commonName: {{ .Values.certificate.commonName }}
+  commonName: {{ .Values.certificate.commonname }}
   dnsNames:
-  - {{ .Values.certificate.dnsName }}
+  - {{ .Values.certificate.dnsname }}

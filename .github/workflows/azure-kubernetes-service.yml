@@ -99,26 +99,27 @@ jobs:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
         cluster-name: ${{ env.CLUSTER_NAME }}
         resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
-              
+    
+    - uses: actions/checkout@master
+
     - name: deploy to k8s
-      uses: actions/checkout@master
       run: |
         helm upgrade --install app --set image.repository=${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }} \
          --set image.tag=${{ github.sha }} \
          --set parameters.keyvaultName=${{ env.KEYVAULT_NAME }} \
          --set parameters.tenantId=${{ env.TENANT_ID }} \
          --set parameters.userAssignedIdentityID=${{ env.USER_CLIENT_ID }} \
-         --set ingress.annotations.cert-manager.io/cluster-issuer=${{ env.CLUSTER_ISSUER_NAME }} \
-         --set ingress.hosts.host=${{ env.APP_HOSTNAME }} \
-         --set ingress.tls.secretName=${{ env.SECRET_NAME }} \
-         --set ingress.tls.hosts=${{ env.APP_HOSTNAME }} \
+         --set "ingress.annotations.cert-manager\.io/cluster-issuer=${{ env.CLUSTER_ISSUER_NAME }}" \
+         --set "ingress.hosts[0].host=${{ env.APP_HOSTNAME }}" \
+         --set "ingress.tls[0].secretName=${{ env.SECRET_NAME }}" \
+         --set "ingress.tls[0].hosts={${{ env.APP_HOSTNAME }}}" \
          --set clusterIssuer.name=${{ env.CLUSTER_ISSUER_NAME }} \
          --set clusterIssuer.secretKey=${{ env.CLUSTER_ISSUER_SECRET_KEY }} \
          --set certificate.name=${{ env.CERTIFICATE_NAME }} \
          --set certificate.secretName=${{ env.SECRET_NAME }} \
          --set certificate.commonName=${{ env.COMMON_NAME }} \
          --set certificate.dnsName=${{ env.DNS_NAME }} \
-         --set env.POSTGRES_HOST=${{ secrets.DB_HOST }} \
+         --set env.POSTGRES_HOST="${{ secrets.DB_HOST }}" \
          ./chart/ -f ./chart/values.yaml --create-namespace -n ${{ env.NAMESPACE }}
         
       
