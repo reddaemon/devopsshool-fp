@@ -230,7 +230,7 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//is token valid?
-	if _, ok := token.Claims.(jwt.StandardClaims); !ok && !token.Valid {
+	if _, ok := token.Claims.(jwt.RegisteredClaims); !ok && !token.Valid {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
