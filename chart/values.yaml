@@ -145,6 +145,7 @@ certificate:
   commonname: ""
   dnsname: ""
 
+
 podmonitor:
   port: 8085
   label: "myapp"
