@@ -20,7 +20,10 @@ func TokenAuthMiddleware(next http.Handler) http.Handler {
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Header().Add("Content-Type", "application/json")
-			w.Write([]byte(err.Error()))
+			_, err = w.Write([]byte(err.Error()))
+			if err != nil {
+				log.Printf("Write failed: %v", err)
+			}
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -57,7 +60,7 @@ func TokenValid(r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	if _, ok := token.Claims.(jwt.StandardClaims); !ok && !token.Valid {
+	if _, ok := token.Claims.(jwt.RegisteredClaims); !ok && !token.Valid {
 		return err
 	}
 	return nil

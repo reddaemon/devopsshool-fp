@@ -50,6 +50,6 @@ func main() {
 
 	h := handlers.NewHandler(uc)
 	router := router.RegisterRouter(h)
-	http.ListenAndServe(":8085", router)
+	log.Fatal(http.ListenAndServe(":8085", router))
 
 }
