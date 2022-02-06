@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "chart.fullname" . }}
   labels:
+    app.kubernetes.io/component: {{ .Values.podmonitor.label }}
     {{- include "chart.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
