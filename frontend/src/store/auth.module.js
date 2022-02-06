@@ -2,7 +2,6 @@ import AuthService from '../services/auth.service';
 import { useCookies } from "vue3-cookies";
 
 const { cookies } = useCookies();
-//const user = JSON.parse(localStorage.getItem('user'));
 const user = cookies.get('user');
 const initialState = user
   ? { status: { loggedIn: true }, user }

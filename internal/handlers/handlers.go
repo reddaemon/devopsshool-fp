@@ -26,6 +26,14 @@ func NewHandler(uc *usecase.Usecase) *Handler {
 	return &Handler{uc: uc}
 }
 
+const header = "Content-Type"
+const headerValue = "application/json"
+const headerCors = "Access-Control-Allow-Origin"
+const headerCorsMethod = "Access-Control-Request-Method"
+const headerCorsHeader = "Access-Control-Request-Headers"
+const headerCorMethodValue = "GET, POST, OPTIONS"
+const headerCorsHeaderValue = "Content-Type, Origin, Accept, token"
+
 func (h *Handler) GetRate(w http.ResponseWriter, r *http.Request) {
 	result, err := h.uc.GetData()
 	if err != nil {
@@ -50,9 +58,12 @@ func (h *Handler) GetRate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Write(js)
+	w.Header().Set(header, headerValue)
+	w.Header().Set(headerCors, "*")
+	_, err = w.Write(js)
+	if err != nil {
+		log.Printf("Write failed: %v", err)
+	}
 }
 
 func sortRecords(records []models.Valute, orderField string, orderBy int) {
@@ -88,8 +99,8 @@ func (h *Handler) PullRate(w http.ResponseWriter, r *http.Request) {
 	date := dd + "/" + mm + "/" + yyyy
 	h.uc.PullDataByPeriod(date)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set(header, headerValue)
+	w.Header().Set(headerCors, "*")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -137,14 +148,20 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	ts, err := h.uc.CreateToken(u.ID)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		_, err = w.Write([]byte(err.Error()))
+		if err != nil {
+			log.Printf("Write failed: %v", err)
+		}
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
 
 	saveErr := h.uc.CreateAuth(ctx, u.ID, ts)
 	if saveErr != nil {
-		w.Write([]byte(saveErr.Error()))
+		_, err = w.Write([]byte(saveErr.Error()))
+		if err != nil {
+			log.Printf("Write failed: %v", err)
+		}
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
@@ -155,15 +172,18 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	resp, _ := json.Marshal(tokens)
 
-	w.Header().Add("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add(header, headerValue)
+	w.Header().Set(headerCors, "*")
 	w.Header().Add("Vary", "Origin")
-	w.Header().Add("Vary", "Access-Control-Request-Method")
-	w.Header().Add("Vary", "Access-Control-Request-Headers")
-	w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Origin, Accept, token")
-	w.Header().Add("Access-Control-Allow-Methods", "GET, POST,OPTIONS")
+	w.Header().Add("Vary", headerCorsMethod)
+	w.Header().Add("Vary", headerCorsHeader)
+	w.Header().Add(headerCorsHeader, headerCorsHeaderValue)
+	w.Header().Add(headerCorsMethod, headerCorMethodValue)
 	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
+	_, err = w.Write(resp)
+	if err != nil {
+		log.Printf("Write failed: %v", err)
+	}
 }
 
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
@@ -173,8 +193,11 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("cannot extract token metadata...")
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte("unauthorized"))
+		w.Header().Add(header, headerValue)
+		_, err = w.Write([]byte("unauthorized"))
+		if err != nil {
+			log.Printf("Write failed: %v", err)
+		}
 		return
 	}
 
@@ -183,20 +206,26 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%d", deleted)
 		log.Println("cannot delete auth for accessUUid")
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte("unauthorized"))
+		w.Header().Add(header, headerValue)
+		_, err = w.Write([]byte("unauthorized"))
+		if err != nil {
+			log.Printf("Write failed: %v", err)
+		}
 		return
 	}
-	w.Header().Add("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add(header, headerValue)
+	w.Header().Set(headerCors, "*")
 	w.Header().Add("Vary", "Origin")
-	w.Header().Add("Vary", "Access-Control-Request-Method")
-	w.Header().Add("Vary", "Access-Control-Request-Headers")
-	w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Origin, Accept, token")
-	w.Header().Add("Access-Control-Allow-Methods", "GET, POST,OPTIONS")
+	w.Header().Add("Vary", headerCorsMethod)
+	w.Header().Add("Vary", headerCorsHeader)
+	w.Header().Add(headerCorsHeader, headerCorsHeaderValue)
+	w.Header().Add(headerCorsMethod, headerCorMethodValue)
 	w.WriteHeader(http.StatusOK)
-	w.Header().Add("Content-Type", "application/json")
-	w.Write([]byte("Successfully logged out"))
+	w.Header().Add(header, headerValue)
+	_, err = w.Write([]byte("Successfully logged out"))
+	if err != nil {
+		log.Printf("Write failed: %v", err)
+	}
 }
 
 func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
@@ -206,8 +235,11 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	_, err := json.Marshal(mapToken)
 	if err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte(err.Error()))
+		w.Header().Add(header, headerValue)
+		_, err = w.Write([]byte(err.Error()))
+		if err != nil {
+			log.Printf("Write failed: %v", err)
+		}
 		return
 	}
 	refreshtoken := mapToken["refresh_token"]
@@ -224,13 +256,16 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("token expired error: %s", err.Error())
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Header().Add("Content-Type", "application/json")
-		w.Write([]byte("Refresh token expired"))
+		w.Header().Add(header, headerValue)
+		_, err = w.Write([]byte("Refresh token expired"))
+		if err != nil {
+			log.Printf("Write failed: %v", err)
+		}
 		return
 	}
 
 	//is token valid?
-	if _, ok := token.Claims.(jwt.StandardClaims); !ok && !token.Valid {
+	if _, ok := token.Claims.(jwt.RegisteredClaims); !ok && !token.Valid {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -240,15 +275,18 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 		refreshUuid, ok := claims["refresh_uuid"].(float64) // convert interface to string
 		if !ok {
 			w.WriteHeader(http.StatusUnprocessableEntity)
-			w.Header().Add("Content-Type", "application/json")
+			w.Header().Add(header, headerValue)
 		}
 
 		userId, err := strconv.ParseFloat(fmt.Sprintf("%.f", claims["user_id"]), 64)
 		//userId := claims["user_id"]
 		if err != nil {
 			w.WriteHeader(http.StatusUnprocessableEntity)
-			w.Header().Add("Content-Type", "application/json")
-			w.Write([]byte("Error occurred"))
+			w.Header().Add(header, headerValue)
+			_, err = w.Write([]byte("Error occurred"))
+			if err != nil {
+				log.Printf("Write failed: %v", err)
+			}
 			return
 		}
 		refreshUuidStr := fmt.Sprintf("%f", refreshUuid)
@@ -258,23 +296,29 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Printf("deleted: %d", deleted)
 			w.WriteHeader(http.StatusUnprocessableEntity)
-			w.Header().Add("Content-Type", "application/json")
-			w.Write([]byte("unauthorized"))
+			w.Header().Add(header, headerValue)
+			_, err = w.Write([]byte("unauthorized"))
+			if err != nil {
+				log.Printf("Write failed: %v", err)
+			}
 			return
 		}
 		// Create new pairs of refresh and access tokens
 		ts, err := h.uc.CreateToken(userId)
 		if err != nil {
 			w.WriteHeader(http.StatusForbidden)
-			w.Header().Add("Content-Type", "application/json")
+			w.Header().Add(header, headerValue)
 			return
 		}
 		// save the tokens metadata to redis
 		err = h.uc.CreateAuth(ctx, userId, ts)
 		if err != nil {
 			w.WriteHeader(http.StatusForbidden)
-			w.Header().Add("Content-Type", "application/json")
-			w.Write([]byte(err.Error()))
+			w.Header().Add(header, headerValue)
+			_, err = w.Write([]byte(err.Error()))
+			if err != nil {
+				log.Printf("Write failed: %v", err)
+			}
 			return
 		}
 		tokens := map[string]string{
@@ -283,15 +327,18 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 		}
 		resp, _ := json.Marshal(tokens)
 
-		w.Header().Add("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Add(header, headerValue)
+		w.Header().Set(headerCors, "*")
 		w.Header().Add("Vary", "Origin")
-		w.Header().Add("Vary", "Access-Control-Request-Method")
-		w.Header().Add("Vary", "Access-Control-Request-Headers")
-		w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Origin, Accept, token")
-		w.Header().Add("Access-Control-Allow-Methods", "GET, POST,OPTIONS")
+		w.Header().Add("Vary", headerCorsMethod)
+		w.Header().Add("Vary", headerCorsHeader)
+		w.Header().Add(headerCorsHeader, headerCorsHeaderValue)
+		w.Header().Add(headerCorsMethod, headerCorMethodValue)
 		w.WriteHeader(http.StatusCreated)
-		w.Write(resp)
+		_, err = w.Write(resp)
+		if err != nil {
+			log.Printf("Write failed: %v", err)
+		}
 
 	}
 }

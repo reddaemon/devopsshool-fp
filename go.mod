@@ -15,7 +15,22 @@ require (
 	golang.org/x/net v0.0.0-20211020060615-d418f374d309
 )
 
-require github.com/golang-jwt/jwt/v4 v4.2.0
+require (
+	github.com/golang-jwt/jwt/v4 v4.2.0
+	github.com/prometheus/client_golang v0.9.3
+)
+
+require (
+	github.com/766b/chi-prometheus v0.0.0-20211217152057-87afa9aa2ca8 // indirect
+	github.com/beorn7/perks v1.0.0 // indirect
+	github.com/go-chi/chi v1.5.4 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
+	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
+	github.com/prometheus/common v0.4.0 // indirect
+	github.com/prometheus/procfs v0.0.0-20190507164030-5867b95ac084 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
+)
 
 require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
