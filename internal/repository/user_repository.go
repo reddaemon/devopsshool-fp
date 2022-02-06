@@ -16,6 +16,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
+	"github.com/jackc/pgx/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -42,12 +43,15 @@ func (i *Instance) PreCheck(ctx context.Context, user *models.User) bool {
 
 	for rows.Next() {
 		temp := &models.User{}
-		rows.Scan(&temp.Email, &temp.Password)
+		err := rows.Scan(&temp.Email, &temp.Password)
+		if err != nil && err != pgx.ErrNoRows {
+			log.Printf("%s", err.Error())
+		}
 		if temp.Email != "" {
 			log.Println("Email is already exists")
 			return false
 		}
-		err := bcrypt.CompareHashAndPassword([]byte(temp.Password), []byte(user.Password))
+		err = bcrypt.CompareHashAndPassword([]byte(temp.Password), []byte(user.Password))
 		if err != nil {
 			log.Printf("invalid password: %s", err)
 			return false

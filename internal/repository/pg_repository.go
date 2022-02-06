@@ -10,15 +10,15 @@ import (
 	"context"
 	"errors"
 
-	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/go-redis/redis/v8"
+	"github.com/jackc/pgconn"
+	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type Instance struct {
-	Db *pgxpool.Pool
+	Db        *pgxpool.Pool
 	redisConn *redis.Client
-	
 }
 
 func NewInstance(db *pgxpool.Pool, rc *redis.Client) *Instance {
@@ -107,9 +107,12 @@ func (i *Instance) Select(ctx context.Context) ([]models.ValCurs, error) {
 	for rows.Next() {
 		currency := models.ValCurs{}
 		var currencytmp string
-		rows.Scan(&currency.Date, &currencytmp)
+		err := rows.Scan(&currency.Date, &currencytmp)
+		if err != nil && err != pgx.ErrNoRows {
+			log.Printf("%s", err.Error())
+		}
 
-		err := json.Unmarshal([]byte(currencytmp), &currency.Valute)
+		err = json.Unmarshal([]byte(currencytmp), &currency.Valute)
 		if err != nil {
 			log.Printf("%#v", err)
 		}
