@@ -10,15 +10,14 @@ import (
 	"context"
 	"errors"
 
-	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/go-redis/redis/v8"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Instance struct {
-	Db *pgxpool.Pool
+	Db        *pgxpool.Pool
 	redisConn *redis.Client
-	
 }
 
 func NewInstance(db *pgxpool.Pool, rc *redis.Client) *Instance {

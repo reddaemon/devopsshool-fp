@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func NewPsqlDb(c *config.Config) (*pgxpool.Pool, error) {
@@ -31,7 +31,7 @@ func NewPsqlDb(c *config.Config) (*pgxpool.Pool, error) {
 		poolConfig.MaxConns = 5
 
 		//Получаем пул соединений, используя контекст и конфиг
-		pool, err := pgxpool.ConnectConfig(ctx, poolConfig)
+		pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Connect to database failed: %v\n", err)
 			os.Exit(1)
@@ -56,7 +56,7 @@ func NewPsqlDb(c *config.Config) (*pgxpool.Pool, error) {
 		poolConfig.MaxConns = 5
 
 		//Получаем пул соединений, используя контекст и конфиг
-		pool, err := pgxpool.ConnectConfig(ctx, poolConfig)
+		pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Connect to database failed: %v\n", err)
 			os.Exit(1)
