@@ -10,7 +10,7 @@ require (
 	github.com/pressly/goose/v3 v3.21.1
 	github.com/spf13/viper v1.19.0
 	golang.org/x/crypto v0.31.0
-	golang.org/x/net v0.27.0
+	golang.org/x/net v0.33.0
 )
 
 require (
