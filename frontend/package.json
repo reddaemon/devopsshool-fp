@@ -10,6 +10,7 @@
     "resolve-install": "npx npm-force-resolutions && npm install"
   },
   "dependencies": {
+    "@achrinza/node-ipc": "^10.1.11",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/vue-fontawesome": "^3.0.8",
