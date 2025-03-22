@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
+    "serve": "vite preview",
+    "build": "vite build",
+    "lint": "vite lint",
     "preinstall": "([ ! -f package-lock.json ] && npm install --package-lock-only --ignore-scripts --no-audit); npx npm-force-resolutions",
     "resolve-install": "npx npm-force-resolutions && npm install"
   },
@@ -31,7 +31,7 @@
     "node-forge": "^1.3.0",
     "popper.js": "^1.16.1",
     "qs": "^6.12.3",
-    "sass": "^1.77.8",
+    "sass": "^1.86.0",
     "sass-graph": "4.0.1",
     "scss-tokenizer": "^0.4.3",
     "terser": "^5.31.2",
@@ -45,16 +45,17 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.24.8",
+    "@vitejs/plugin-vue": "^5.2.3",
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-plugin-eslint": "~5.0.8",
-    "@vue/cli-service": "~5.0.8",
     "@vue/compiler-sfc": "^3.4.31",
     "eslint": "^8.6.0",
     "eslint-plugin-vue": "^7.0.0",
     "http-cache-semantics": ">=4.1.1",
     "npm-force-resolutions": "^0.0.10",
     "sass": "^1.77.7",
-    "sass-loader": "^14.2.1"
+    "sass-loader": "^14.2.1",
+    "vite": "^6.2.2"
   },
   "eslintConfig": {
     "root": true,
