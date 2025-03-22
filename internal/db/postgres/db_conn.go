@@ -1,14 +1,18 @@
 package postgres
 
 import (
-	"final-project/internal/config"
-
 	"context"
+	"final-project/internal/config"
 	"fmt"
 	"net/url"
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+const (
+	defaultConnectionTimeout = 5
+	maxconns                 = 10
 )
 
 func NewPsqlDb(c *config.Config) (*pgxpool.Pool, error) {
@@ -21,16 +25,16 @@ func NewPsqlDb(c *config.Config) (*pgxpool.Pool, error) {
 			c.Postgres.PostgresqlPort,
 			c.Postgres.PostgresqlDbname,
 			c.Postgres.PostgresqlSSLMode,
-			5)
+			defaultConnectionTimeout)
 
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		//Сконфигурируем пул, задав для него максимальное количество соединений
+		// configuring connection params
 		poolConfig, _ := pgxpool.ParseConfig(connStr)
-		poolConfig.MaxConns = 5
+		poolConfig.MaxConns = maxconns
 
-		//Получаем пул соединений, используя контекст и конфиг
+		// getting connection pool
 		pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Connect to database failed: %v\n", err)
@@ -51,11 +55,11 @@ func NewPsqlDb(c *config.Config) (*pgxpool.Pool, error) {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		//Сконфигурируем пул, задав для него максимальное количество соединений
+		// configuring connection params
 		poolConfig, _ := pgxpool.ParseConfig(connStr)
 		poolConfig.MaxConns = 5
 
-		//Получаем пул соединений, используя контекст и конфиг
+		// getting connection pool
 		pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Connect to database failed: %v\n", err)
@@ -64,5 +68,4 @@ func NewPsqlDb(c *config.Config) (*pgxpool.Pool, error) {
 
 		return pool, nil
 	}
-
 }
