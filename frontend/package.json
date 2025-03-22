@@ -16,7 +16,7 @@
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "ansi-regex": "^4.1.1",
     "async": "^2.6.4",
-    "axios": "^0.28.0",
+    "axios": "^1.8.2",
     "bootstrap": "^4.6.1",
     "core-js": "^3.37.1",
     "glob-parent": ">=5.1.2",
