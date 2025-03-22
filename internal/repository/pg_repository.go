@@ -1,18 +1,22 @@
 package repository
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"final-project/internal/models"
 	"log"
 	"strings"
 	"time"
 
-	"context"
-	"errors"
-
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+const (
+	layoutISO = "02.01.2006"
+	layoutUS  = "02-Jan-2006"
 )
 
 type Instance struct {
@@ -25,11 +29,6 @@ func NewInstance(db *pgxpool.Pool, rc *redis.Client) *Instance {
 }
 
 func (i *Instance) Insert(ctx context.Context, currency []models.ValCurs) error {
-	const (
-		layoutISO = "02.01.2006"
-		layoutUS  = "02-Jan-2006"
-	)
-
 	for number := range currency {
 		log.Println("RECORD:", currency[number].Valute)
 		for _, item := range currency[number].Valute {
@@ -117,5 +116,4 @@ func (i *Instance) Select(ctx context.Context) ([]models.ValCurs, error) {
 	}
 
 	return valcurs, nil
-
 }
